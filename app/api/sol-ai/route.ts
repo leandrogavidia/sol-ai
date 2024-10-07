@@ -27,13 +27,16 @@ export async function POST(request: Request) {
     });
 
     const resData = await res.json();
-    const documents = resData.flat();
+    console.log(resData)
+    const documents = resData.content;
 
     systemContent += "\n\n```";
 
     for (let i = 0; i < documents.length; i++) {
         systemContent += "\n" + documents[i];
     }
+    
+    console.log("systemContent", systemContent)
 
     messages.push({
         role: "system",
