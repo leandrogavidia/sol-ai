@@ -19,12 +19,12 @@ export function Header() {
                 <nav>
                     <ul className="flex justify-center gap-x-3 items-center font-semibold">
                         <li>
-                            <Link href="/">
+                            <Link className="text-white" href="/">
                                 Demo
                             </Link>
                         </li>
                         <li>
-                            <Link href="#">
+                            <Link className="text-white" href="#">
                                 Roadmap
                             </Link>
                         </li>
