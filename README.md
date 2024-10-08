@@ -10,7 +10,7 @@ Este sitio web es una demostración del primer asistente de inteligencia artific
 
 El sitio se conecta a la API Sol AI, que proporciona el contexto necesario para responder a las preguntas a través de una documentación estructurada de código abierto.
 
-|![Sol AI Demo](./public/sol-ai-demo.jpg)
+![Sol AI Demo](./public/sol-ai-demo.jpg)
 
 ## Getting Started
 

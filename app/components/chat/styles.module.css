@@ -4,17 +4,16 @@
     justify-content: center;
     align-items: start;
     gap: 20px;
+}
 
-    ul,
-    ol {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: start;
-        gap: 16px;
-    }
+.markdown ul, .markdown ol {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;
+    gap: 16px;
+}
 
-    p {
-        display: block;
-    }
+.markdown p {
+    display: block;
 }
