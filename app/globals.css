@@ -28,6 +28,10 @@ body {
   margin: 0 auto;
 }
 
+a {
+  color: #0000ff
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;

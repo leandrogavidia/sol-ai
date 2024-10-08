@@ -9,20 +9,20 @@ if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
 }
 
 export async function POST(request: Request) {
-        const { messages } = await request.json();
+    const { messages } = await request.json();
 
-        createGoogleGenerativeAI({
-            apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
-        });
-    
-        const result = await streamText({
-            model: google("models/gemini-1.5-pro-latest"),
-            messages: convertToCoreMessages(messages),
-            maxTokens: 4096,
-            temperature: 0.7,
-            topP: 0.40,
-            topK: 32
-          });
-      
-          return result.toAIStreamResponse();
+    createGoogleGenerativeAI({
+        apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
+    });
+
+    const result = await streamText({
+        model: google("models/gemini-1.5-pro-latest"),
+        messages: convertToCoreMessages(messages),
+        maxTokens: 4096,
+        temperature: 0.7,
+        topP: 0.40,
+        topK: 32
+    });
+
+    return result.toAIStreamResponse();
 }

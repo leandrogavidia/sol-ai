@@ -27,7 +27,6 @@ export async function POST(request: Request) {
     });
 
     const resData = await res.json();
-    console.log(resData)
     const documents = resData.content;
 
     systemContent += "\n\n```";
@@ -35,8 +34,6 @@ export async function POST(request: Request) {
     for (let i = 0; i < documents.length; i++) {
         systemContent += "\n" + documents[i];
     }
-    
-    console.log("systemContent", systemContent)
 
     messages.push({
         role: "system",
@@ -46,6 +43,11 @@ export async function POST(request: Request) {
     const result = await streamText({
         model: openai('gpt-4o-mini'),
         messages: convertToCoreMessages(messages),
+        maxTokens: 1024,
+        temperature: 0.70,
+        topP: 1,
+        frequencyPenalty: 0,
+        presencePenalty: 0
     });
 
     return result.toDataStreamResponse();
