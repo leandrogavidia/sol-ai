@@ -17,9 +17,9 @@ export function Header() {
                 </Link>
 
                 <nav>
-                    <ul className="flex justify-center gap-x-3 items-center font-semibold">
+                    <ul className="flex justify-center gap-x-3 items-center">
                         <li>
-                            <Link className="text-white" href="/">
+                            <Link className="text-white underline" href="/">
                                 Demo
                             </Link>
                         </li>
