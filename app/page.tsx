@@ -45,8 +45,8 @@ export default function Home() {
   ];
 
   return (
-    <div className="w-full h-full p-4 mx-auto grid grid-cols-1 md:grid-cols-2 row-auto border rounded-2xl border-zinc-900 px-4 gap-6">
-      <div className="hidden w-full h-full md:flex flex-col justify-start items-center gap-y-6">
+    <div className="w-full h-full p-4 mx-auto grid grid-cols-1 sm:grid-cols-2 row-auto border rounded-2xl border-zinc-900 px-4 gap-6">
+      <div className=" w-full h-full flex flex-col justify-start items-center gap-y-6">
         <select
           onChange={(e) => {
             setMessages([])
