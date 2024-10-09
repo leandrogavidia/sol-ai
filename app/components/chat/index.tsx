@@ -15,12 +15,12 @@ export function Chat({ model }: { model: string }) {
   });
 
   const suggestedQuestions = [
-    "¿Qué es el proyecto Local Solana?",
-    "¿Qué es el token ORE?",
-    "¿Qué es Solana Allstars?",
-    "¿Qué es La Familia?",
-    "¿Qué es Heavy Duty Builders?",
-    "¿Qué comunidades me recomiendas para aprender a programar en Solana y sobre DeFi?"
+    "What is the Local Solana project",
+    "What is the ORE token?",
+    "What is Solana Allstars?",
+    "What is La Familia?",
+    "What is Heavy Duty Builders?",
+    "What communities do you recommend to learn how to program and about DeFi"
   ]
 
   return (
@@ -90,7 +90,7 @@ export function Chat({ model }: { model: string }) {
         <input
           className="w-full bg-transparent border border-zinc-900 rounded-md p-2 text-white"
           value={input}
-          placeholder={isLoading ? "Enviando..." : "Escribe tu mensaje..."}
+          placeholder={isLoading ? "Sending..." : "Type your message..."}
           onChange={handleInputChange}
           disabled={isLoading}
         />
