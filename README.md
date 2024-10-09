@@ -3,12 +3,12 @@
   ![Watch the demo](./public/sol-ai-logo.png)
   <h1>Sol AI - Solana Copa America</h1>
   
-  <h3>Asistente de IA especializado en Solana</h3>
+  <h3>AI-powered solana virtual assistant</h3>
 </div>
 
-Este sitio web es una demostración del primer asistente de inteligencia artificial especializado en Solana. A la izquierda, podrás hacer preguntas a modelos de IA como Gemini o Chat-GPT, mientras que a la derecha podrás consultar a **Sol AI** para comparar información actual sobre el ecosistema de Solana.
+This website is a demonstration of the first artificial intelligence assistant specialized in Solana. On the left, you can ask questions to AI models like Gemini or Chat-GPT, while on the right you can consult **Sol AI** to compare current information about the Solana ecosystem.
 
-El sitio se conecta a la [API de Sol AI](https://github.com/leandrogavidia/sol-ai-api), que proporciona el contexto necesario para responder a las preguntas a través de una documentación estructurada de código abierto.
+The site connects to the [Sol AI API](https://github.com/leandrogavidia/sol-ai-api), which provides the necessary context to answer questions through structured open-source documentation.
 
 ![Sol AI Demo](./public/sol-ai-demo.jpg)
 
