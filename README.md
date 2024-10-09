@@ -8,7 +8,7 @@
 
 Este sitio web es una demostración del primer asistente de inteligencia artificial especializado en Solana. A la izquierda, podrás hacer preguntas a modelos de IA como Gemini o Chat-GPT, mientras que a la derecha podrás consultar a **Sol AI** para comparar información actual sobre el ecosistema de Solana.
 
-El sitio se conecta a la API Sol AI, que proporciona el contexto necesario para responder a las preguntas a través de una documentación estructurada de código abierto.
+El sitio se conecta a la [API de Sol AI](https://github.com/leandrogavidia/sol-ai-api), que proporciona el contexto necesario para responder a las preguntas a través de una documentación estructurada de código abierto.
 
 ![Sol AI Demo](./public/sol-ai-demo.jpg)
 
