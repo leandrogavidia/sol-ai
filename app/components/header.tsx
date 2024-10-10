@@ -24,7 +24,7 @@ export function Header() {
                             </Link>
                         </li>
                         <li>
-                            <Link className="text-white" href="#">
+                            <Link className="text-white" href="/sol-ai-roadmap.pdf" target="_blank">
                                 Roadmap
                             </Link>
                         </li>
