@@ -77,8 +77,8 @@ export async function POST(req: Request) {
               }),
             });
 
-            let data = await response.json();
-            let mint_data = {
+            const data = await response.json();
+            const mint_data = {
               interface: data?.result?.interface,
               metadata: data?.result?.content?.metadata,
               mint_address: data?.result?.id,
