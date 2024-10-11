@@ -31,6 +31,7 @@ export default function Home() {
     setInput: solAiSetInput,
   } = useChat({
     api: `api/sol-ai`,
+    maxSteps: 2
   });
 
   const models = [
