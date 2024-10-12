@@ -5,6 +5,7 @@ import { z } from "zod";
 export const maxDuration = 30;
 
 const HELIUS_RPC = process.env.HELIUS_RPC || "";
+export const runtime = "edge";
 
 if (!process.env.OPENAI_API_KEY || !HELIUS_RPC) {
   throw new Error("Missing environment variables, check the .env.example file");
@@ -103,6 +104,29 @@ export async function POST(req: Request) {
           }
         },
       }),
+      getBlink: tool({
+        description: "Get the data in a Solana Action by a Solana Action URL.",
+        parameters: z.object({
+          actionUrl: z.string().describe("Solana Action URL to get data to render a blink")
+        }),
+        execute: async ({ actionUrl }) => {
+          try {
+            const response = await fetch(actionUrl);
+            const data = await response.json();
+  
+            return {
+              actionUrl: `solana-action:${actionUrl}`,
+              actionData: {
+                title: data.title,
+                description: data.description,
+                disabled: data.disabled ? true : false
+              }
+            }
+          } catch (e) {
+            console.error("ERROR GETTING Blink DATA", e);
+          }
+        }
+      })
     },
   });
 

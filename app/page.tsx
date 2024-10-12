@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import { Chat } from "./components/chat";
 import Image from "next/image";
 import { useChat } from "ai/react";
+import { randomString } from "./lib/random-string";
+import { useActionSolanaWalletAdapter } from "@dialectlabs/blinks/hooks/solana";
 
 export default function Home() {
   const [model, setModel] = useState("gpt-4o-mini");
@@ -20,6 +22,10 @@ export default function Home() {
     api: `api/${model}`,
   });
 
+  const { adapter } = useActionSolanaWalletAdapter(
+    process.env.NEXT_PUBLIC_RPC || ""
+  );
+
   const {
     messages: solAiMessages,
     input: solAiInput,
@@ -31,8 +37,49 @@ export default function Home() {
     setInput: solAiSetInput,
   } = useChat({
     api: `api/sol-ai`,
-    maxSteps: 2
+    maxSteps: 3,
   });
+
+  const clearMessages = () => {
+    setMessages([]);
+    solAiSetMessages([]);
+  };
+
+  const handleModelChange = (newModel: string) => {
+    setModel(newModel);
+    clearMessages();
+  };
+
+  const handleAppend = (content: string) => {
+    append({
+      content,
+      role: "user",
+      createdAt: new Date(),
+      id: randomString(7),
+    });
+
+    solAiAppend({
+      content,
+      role: "user",
+      createdAt: new Date(),
+      id: randomString(7),
+    });
+  };
+
+  const changeInput = (e: ChangeEvent<HTMLInputElement>) => {
+    handleInputChange(e);
+    SolAiHandleInputChange(e);
+  };
+
+  const clearInput = () => {
+    setInput("");
+    solAiSetInput("");
+  };
+
+  const submitMessage = (e: FormEvent<HTMLFormElement>) => {
+    handleSubmit(e);
+    solAiHandleSubmit(e);
+  };
 
   const models = [
     {
@@ -49,11 +96,7 @@ export default function Home() {
     <div className="w-full h-full p-4 mx-auto grid grid-cols-1 sm:grid-cols-2 row-auto border rounded-2xl border-zinc-900 px-4 gap-6">
       <div className=" w-full h-full flex flex-col justify-start items-center gap-y-6">
         <select
-          onChange={(e) => {
-            setMessages([])
-            solAiSetMessages([])
-            setModel(e.target.value)
-          }}
+          onChange={(e) => handleModelChange(e.target.value)}
           name="model"
           id="model"
           defaultValue="gpt-4o-mini"
@@ -67,19 +110,15 @@ export default function Home() {
         </select>
         <Chat
           model={model}
-          append={append}
-          handleInputChange={handleInputChange}
-          handleSubmit={handleSubmit}
           input={input}
           isLoading={isLoading}
           messages={messages}
-          setMessages={setMessages}
-          secondHandleInputChange={SolAiHandleInputChange}
-          secondHandleSubmit={solAiHandleSubmit}
-          setInput={setInput}
-          secondSetInput={solAiSetInput}
-          secondSetMessages={solAiSetMessages}
-          secondAppend={solAiAppend}
+          clearMessages={clearMessages}
+          handleAppend={handleAppend}
+          changeInput={changeInput}
+          clearInput={clearInput}
+          submitMessage={submitMessage}
+          adapter={adapter}
         />
       </div>
 
@@ -96,19 +135,15 @@ export default function Home() {
         </div>
         <Chat
           model="sol-ai"
-          append={solAiAppend}
-          handleInputChange={SolAiHandleInputChange}
-          handleSubmit={solAiHandleSubmit}
           input={solAiInput}
           isLoading={solAiIsLoading}
           messages={solAiMessages}
-          secondHandleInputChange={handleInputChange}
-          secondHandleSubmit={handleSubmit}
-          setMessages={solAiSetMessages}
-          setInput={solAiSetInput}
-          secondSetInput={setInput}
-          secondSetMessages={setMessages}
-          secondAppend={append}
+          clearMessages={clearMessages}
+          handleAppend={handleAppend}
+          changeInput={changeInput}
+          clearInput={clearInput}
+          submitMessage={submitMessage}
+          adapter={adapter}
         />
       </div>
     </div>
