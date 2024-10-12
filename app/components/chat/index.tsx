@@ -6,24 +6,21 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Gemini } from "../icons/gemini";
 import { Gpt4oMini } from "../icons/gpt-4o-mini";
-import { randomString } from "@/app/lib/random-string";
 import { UserChat } from "./types";
+import { useMemo } from "react";
+import { BlinkMessage } from "../blink-message";
 
 export function Chat({
-  append,
-  handleInputChange,
-  handleSubmit,
-  secondHandleSubmit,
   input,
   isLoading,
   messages,
   model,
-  setMessages,
-  secondHandleInputChange,
-  setInput,
-  secondSetInput,
-  secondSetMessages,
-  secondAppend,
+  clearMessages,
+  handleAppend,
+  changeInput,
+  clearInput,
+  submitMessage,
+  adapter,
 }: UserChat) {
   const suggestedQuestions = [
     "What is the Local Solana project",
@@ -32,40 +29,48 @@ export function Chat({
     "What is La Familia?",
     "What is Heavy Duty Builders?",
     "What communities do you recommend to learn how to program and about DeFi",
-    input,
   ];
 
-  console.log(messages);
+  const assistantImage = useMemo(() => {
+    if (model === "gemini") {
+      return <Gemini />;
+    } else if (model === "gpt-4o-mini") {
+      return <Gpt4oMini />;
+    } else {
+      return (
+        <Image
+          alt="Sol AI"
+          title="Sol AI"
+          src="/solana.svg"
+          width={16}
+          height={16}
+        />
+      );
+    }
+  }, [model]);
+
+  const filteredMessages = useMemo(() => {
+    return messages.filter(
+      (m) =>
+        m.content ||
+        (m.toolInvocations && m.toolInvocations[0].toolName != "getAsset")
+    );
+  }, [messages]);
 
   return (
     <div className="flex flex-col justify-between items-center gap-y-4 w-full min-h-72">
       <div className="min-h-[340px] max-h-[340px] w-full flex flex-col items-start justify-start overflow-auto gap-y-4">
         {messages.length > 0 ? (
           <>
-            {messages
-              .filter((m) => !m.toolInvocations)
-              .map((m) => {
-                const isAssistant = m.role !== "user";
-                const assistantImage =
-                  model === "gemini" ? (
-                    <Gemini />
-                  ) : model === "gpt-4o-mini" ? (
-                    <Gpt4oMini />
-                  ) : (
-                    <Image
-                      alt="Sol AI"
-                      title="Sol AI"
-                      src="/solana.svg"
-                      width={16}
-                      height={16}
-                    />
-                  );
+            {filteredMessages.map((m) => {
+              const isAssistant = m.role !== "user";
 
-                return (
-                  <div
-                    className="flex justify-start items-start gap-x-2"
-                    key={m.id}
-                  >
+              return (
+                <div
+                  key={m.id}
+                  className="flex flex-row justify-start items-start gap-x-6 w-full [&>div:nth-child(2)]:w-full [&>div:nth-child(2)]:pr-6"
+                >
+                  <div className="flex justify-start items-start gap-x-2">
                     {isAssistant ? (
                       assistantImage
                     ) : (
@@ -86,8 +91,16 @@ export function Chat({
                       </ReactMarkdown>
                     </span>
                   </div>
-                );
-              })}
+
+                  {model === "sol-ai" &&
+                  isAssistant &&
+                  m.toolInvocations &&
+                  m.toolInvocations[0].toolName === "getBlink" ? (
+                    <BlinkMessage message={m} adapter={adapter} />
+                  ) : null}
+                </div>
+              );
+            })}
           </>
         ) : (
           <div className="flex flex-col justify-center items-center gap-y-3 w-full max-w-[66%] mx-auto">
@@ -96,21 +109,7 @@ export function Chat({
                 type="button"
                 key={question}
                 className="cursor-pointer bg-black border w-full border-zinc-900 rounded-md p-2 text-white flex justify-center items-center"
-                onClick={() => {
-                  append({
-                    content: question,
-                    role: "user",
-                    createdAt: new Date(),
-                    id: randomString(7),
-                  });
-
-                  secondAppend({
-                    content: question,
-                    role: "user",
-                    createdAt: new Date(),
-                    id: randomString(7),
-                  });
-                }}
+                onClick={() => handleAppend(question)}
               >
                 {question}
               </button>
@@ -121,18 +120,12 @@ export function Chat({
 
       <form
         className="w-full flex justify-start items-center gap-x-2"
-        onSubmit={(e) => {
-          secondHandleSubmit(e);
-          handleSubmit(e);
-        }}
+        onSubmit={(e) => submitMessage(e)}
       >
         <button
           onClick={() => {
-            setInput("");
-            secondSetInput("");
-
-            setMessages([]);
-            secondSetMessages([]);
+            clearInput();
+            clearMessages();
           }}
           className="h-full w-12 rounded-lg flex justify-center items-center border boder-zinc-900"
           type="button"
@@ -149,10 +142,7 @@ export function Chat({
           className="w-full bg-transparent border border-zinc-900 rounded-md p-2 text-white"
           value={input}
           placeholder={isLoading ? "Sending..." : "Type your message..."}
-          onChange={(e) => {
-            handleInputChange(e);
-            secondHandleInputChange(e);
-          }}
+          onChange={(e) => changeInput(e)}
           disabled={isLoading}
         />
       </form>

@@ -18,12 +18,23 @@ body {
 
 a {
   color: #14F195
-
-
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+}
+
+.wallet-adapter-button-trigger {
+  background: transparent !important;
+  border: 1px solid white  !important;
+  border-radius: 9999px;
+  height: 40px;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+}
+.wallet-adapter-dropdown-list,
+.wallet-adapter-button {
+  font-family: inherit !important;
 }
