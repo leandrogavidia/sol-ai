@@ -4,6 +4,7 @@ import { Header } from "./components/header";
 import { Footer } from "./components/footer";
 import Providers from "./components/providers";
 import "./globals.css";
+import "./blink.css"
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
