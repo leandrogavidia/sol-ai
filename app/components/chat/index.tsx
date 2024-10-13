@@ -68,7 +68,7 @@ export function Chat({
               return (
                 <div
                   key={m.id}
-                  className="flex flex-row justify-start items-start gap-x-6 w-full [&>div:nth-child(2)]:w-full [&>div:nth-child(2)]:pr-6"
+                  className="flex flex-row justify-start items-start gap-x-6 w-full [&>div:nth-child(2)]:w-full [&>div:nth-child(2)]:max-w-[446px] [&>div:nth-child(2)]:mx-auto [&>div:nth-child(2)]:pr-6"
                 >
                   <div className="flex justify-start items-start gap-x-2">
                     {isAssistant ? (
