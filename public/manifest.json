@@ -1,0 +1,19 @@
+{
+    "name": "Sol AI",
+    "short_name": "sol-ai",
+    "theme_color": "#14F195",
+    "background_color": "#000000",
+    "display": "standalone",
+    "orientation": "portrait",
+    "scope": "/",
+    "start_url": "/",
+    "icons": [
+      {
+        "src": "sol-ai-logo.png",
+        "sizes": "280x280",
+        "type": "image/png",
+        "purpose": "maskable any"
+      }
+    ],
+    "splash_pages": null
+  }
