@@ -18,7 +18,7 @@ export async function POST(req: Request) {
 
   const query = messages.at(-1).content;
 
-  const url = "https://sol-ai-api.shuttleapp.rs/api/chat";
+  const url = "https://sol-ai-api.shuttleapp.rs/api/query";
   const data = { message: query };
 
   const res = await fetch(url, {
