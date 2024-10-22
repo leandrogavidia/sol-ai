@@ -17,7 +17,8 @@ export function BlinkMessage({
   useEffect(() => {
     const getAction = async (m: Message) => {
       if (m.toolInvocations) {
-        const action = await Action.fetch(m.toolInvocations[0].args.actionUrl).catch(
+        const actionUrl = m.toolInvocations[0].args.actionUrl || "https://metapool-restaking-solana-action.shuttleapp.rs/api/restaking";
+        const action = await Action.fetch(actionUrl).catch(
           () => null
         );
 
