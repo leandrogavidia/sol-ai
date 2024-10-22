@@ -133,6 +133,7 @@ export async function POST(req: Request) {
           projectName: z.string().describe("Project name for Blinks")
         }),
         execute: async ({ projectName }) => {
+          console.log(projectName);
           const blink = {
             "icon": "https://raw.githubusercontent.com/leandrogavidia/files/refs/heads/main/metapool-restaking.png",
             "title": "Restake Aggregator",
