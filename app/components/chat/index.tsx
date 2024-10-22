@@ -57,6 +57,8 @@ export function Chat({
     );
   }, [messages]);
 
+  console.log(messages)
+
   return (
     <div className="flex flex-col justify-between items-center gap-y-4 w-full min-h-72">
       <div className="min-h-[340px] max-h-[340px] w-full flex flex-col items-start justify-start overflow-auto gap-y-4">
@@ -96,6 +98,13 @@ export function Chat({
                   isAssistant &&
                   m.toolInvocations &&
                   m.toolInvocations[0].toolName === "getBlink" ? (
+                    <BlinkMessage message={m} adapter={adapter} />
+                  ) : null}
+
+                  {model === "sol-ai" &&
+                  isAssistant &&
+                  m.toolInvocations &&
+                  m.toolInvocations[0].toolName === "recommendBlinks" ? (
                     <BlinkMessage message={m} adapter={adapter} />
                   ) : null}
                 </div>

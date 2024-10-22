@@ -126,6 +126,42 @@ export async function POST(req: Request) {
             console.error("ERROR GETTING Blink DATA", e);
           }
         }
+      }),
+      recommendBlinks: tool({
+        description: "Recommend some Blinks based on a project name such as Metapool.",
+        parameters: z.object({
+          projectName: z.string().describe("Project name for Blinks")
+        }),
+        execute: async ({ projectName }) => {
+          const blink = {
+            "icon": "https://raw.githubusercontent.com/leandrogavidia/files/refs/heads/main/metapool-restaking.png",
+            "title": "Restake Aggregator",
+            "description": "Solana Restake Aggregator. To restake your LST tokens in Solana, such as mSOL, jitoSOL, bSOL, and receive mpSOL.",
+            "label": "Restake",
+            "links": {
+              "actions": [
+                {
+                  "label": "Restake",
+                  "href": "/api/restaking?amount={amount}&method=restake",
+                  "parameters": [
+                    {
+                      "label": "Amount",
+                      "name": "amount",
+                      "required": false
+                    }
+                  ]
+                }
+              ]
+            },
+            "disabled": false,
+            "error": null
+          }
+
+          return {
+            actionUrl: "https://metapool-restaking-solana-action.shuttleapp.rs/api/restaking",
+            blink
+          }
+        }
       })
     },
   });
