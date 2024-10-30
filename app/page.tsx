@@ -1,128 +1,46 @@
-"use client";
+// "use client";
 
-import { ChangeEvent, FormEvent, useState } from "react";
-import { Chat } from "./components/chat";
+// import { ChangeEvent, FormEvent } from "react";
+// import { Chat } from "./components/chat";
 import Image from "next/image";
-import { useChat } from "ai/react";
-import { randomString } from "./lib/random-string";
-import { useActionSolanaWalletAdapter } from "@dialectlabs/blinks/hooks/solana";
+import Link from "next/link";
+// import { useActionSolanaWalletAdapter } from "@dialectlabs/blinks/hooks/solana";
 
 export default function Home() {
-  const [model, setModel] = useState("gpt-4o-mini");
-  const {
-    messages,
-    input,
-    isLoading,
-    setMessages,
-    handleInputChange,
-    handleSubmit,
-    append,
-    setInput,
-  } = useChat({
-    api: `api/${model}`,
-  });
-
-  const { adapter } = useActionSolanaWalletAdapter(
-    process.env.NEXT_PUBLIC_RPC || ""
-  );
-
-  const {
-    messages: solAiMessages,
-    input: solAiInput,
-    isLoading: solAiIsLoading,
-    setMessages: solAiSetMessages,
-    handleInputChange: SolAiHandleInputChange,
-    handleSubmit: solAiHandleSubmit,
-    append: solAiAppend,
-    setInput: solAiSetInput,
-  } = useChat({
-    api: `api/sol-ai`,
-    maxSteps: 3,
-  });
-
-  const clearMessages = () => {
-    setMessages([]);
-    solAiSetMessages([]);
-  };
-
-  const handleModelChange = (newModel: string) => {
-    setModel(newModel);
-    clearMessages();
-  };
-
-  const handleAppend = (content: string) => {
-    append({
-      content,
-      role: "user",
-      createdAt: new Date(),
-      id: randomString(7),
-    });
-
-    solAiAppend({
-      content,
-      role: "user",
-      createdAt: new Date(),
-      id: randomString(7),
-    });
-  };
-
-  const changeInput = (e: ChangeEvent<HTMLInputElement>) => {
-    handleInputChange(e);
-    SolAiHandleInputChange(e);
-  };
-
-  const clearInput = () => {
-    setInput("");
-    solAiSetInput("");
-  };
-
-  const submitMessage = (e: FormEvent<HTMLFormElement>) => {
-    handleSubmit(e);
-    solAiHandleSubmit(e);
-  };
-
-  const models = [
-    {
-      value: "gemini",
-      label: "Gemini",
-    },
-    {
-      value: "gpt-4o-mini",
-      label: "gpt-4o-mini",
-    },
-  ];
+  // const { adapter } = useActionSolanaWalletAdapter(
+  //   process.env.NEXT_PUBLIC_RPC || ""
+  // );
 
   return (
-    <div className="w-full h-full p-4 mx-auto grid grid-cols-1 sm:grid-cols-2 row-auto border rounded-2xl border-zinc-900 px-4 gap-6">
-      <div className=" w-full h-full flex flex-col justify-start items-center gap-y-6">
-        <select
-          onChange={(e) => handleModelChange(e.target.value)}
-          name="model"
-          id="model"
-          defaultValue="gpt-4o-mini"
-          className="min-h-11 bg-transparent border border-zinc-900 rounded-md p-2 cursor-pointer w-full font-semibold"
-        >
-          {models.map(({ label, value }) => (
-            <option className="text-black" key={value} value={value}>
-              {label}
-            </option>
-          ))}
-        </select>
-        <Chat
-          model={model}
-          input={input}
-          isLoading={isLoading}
-          messages={messages}
-          clearMessages={clearMessages}
-          handleAppend={handleAppend}
-          changeInput={changeInput}
-          clearInput={clearInput}
-          submitMessage={submitMessage}
-          adapter={adapter}
-        />
+    <div className="w-full h-full p-4 mx-auto flex flex-col text-center justify-center items-center px-4">
+      <Image
+        src="/logo.png"
+        width={854}
+        height={210}
+        title="Logo"
+        alt="Logo"
+        className="cursor-pointer max-w-36 h-auto w-full"
+      />
+      <div className="mt-6">
+        <h1 className="text-2xl font-semibold">The AI of Solana</h1>
+        <h2 className="text-lg">AI-powered Solana virtual assistant</h2>
       </div>
-
-      <div className="w-full h-full flex flex-col justify-start items-center gap-y-6">
+      <div className="flex justify-center items-center gap-x-5 mt-8">
+        <Link
+          href="https://drive.google.com/file/d/1NIviRcoH2NS4yvge6yWiQzOCaLRLl0YL/view"
+          target="_blank"
+        >
+          <button className="border border-white text-white flex justify-center items-center min-h-10 px-4 py-2 rounded-md transition-all font-semibold hover:bg-white hover:text-black ">
+            Watch video demo
+          </button>
+        </Link>
+        <Link href="https://forms.gle/zpT1tK7KKXeiSzCh8" target="_blank">
+          <button className="border border-white text-black bg-white flex justify-center items-center min-h-10 px-4 py-2 rounded-md transition-all font-semibold hover:bg-transparent hover:text-white ">
+            Get early access
+          </button>
+        </Link>
+      </div>
+      {/* <div className="w-full h-full flex flex-col justify-start items-center gap-y-6">
         <div className="min-h-11 bg-transparent border border-zinc-900 rounded-md p-2 w-full flex justify-start gap-x-3 items-center">
           <Image
             alt="Sol AI"
@@ -135,17 +53,9 @@ export default function Home() {
         </div>
         <Chat
           model="sol-ai"
-          input={solAiInput}
-          isLoading={solAiIsLoading}
-          messages={solAiMessages}
-          clearMessages={clearMessages}
-          handleAppend={handleAppend}
-          changeInput={changeInput}
-          clearInput={clearInput}
-          submitMessage={submitMessage}
           adapter={adapter}
         />
-      </div>
+      </div> */}
     </div>
   );
 }
