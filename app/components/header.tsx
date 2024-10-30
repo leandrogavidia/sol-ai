@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { SolanaWalletButton } from "./wallet";
+// import { SolanaWalletButton } from "./wallet";
 
 export function Header() {
   return (
@@ -18,7 +18,7 @@ export function Header() {
             className="cursor-pointer max-w-20 h-auto w-full"
           />
         </Link>
-        <nav>
+        {/* <nav>
           <ul className="flex justify-center gap-x-3 items-center">
             <li>
               <SolanaWalletButton />
@@ -38,7 +38,7 @@ export function Header() {
               </Link>
             </li>
           </ul>
-        </nav>
+        </nav> */}
       </div>
     </header>
   );

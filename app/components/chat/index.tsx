@@ -9,19 +9,24 @@ import { Gpt4oMini } from "../icons/gpt-4o-mini";
 import { UserChat } from "./types";
 import { useMemo } from "react";
 import { BlinkMessage } from "../blink-message";
+import { useChat } from "ai/react";
+import { randomString } from "@/app/lib/random-string";
 
-export function Chat({
-  input,
-  isLoading,
-  messages,
-  model,
-  clearMessages,
-  handleAppend,
-  changeInput,
-  clearInput,
-  submitMessage,
-  adapter,
-}: UserChat) {
+export function Chat({ model, adapter }: UserChat) {
+  const {
+    messages,
+    input,
+    isLoading,
+    setMessages,
+    handleInputChange,
+    handleSubmit,
+    append,
+    setInput,
+  } = useChat({
+    api: `api/sol-ai`,
+    maxSteps: 3,
+  });
+
   const suggestedQuestions = [
     "What is the Local Solana project",
     "What is the ORE token?",
@@ -57,7 +62,7 @@ export function Chat({
     );
   }, [messages]);
 
-  console.log(messages)
+  console.log(messages);
 
   return (
     <div className="flex flex-col justify-between items-center gap-y-4 w-full min-h-72">
@@ -118,7 +123,14 @@ export function Chat({
                 type="button"
                 key={question}
                 className="cursor-pointer bg-black border w-full border-zinc-900 rounded-md p-2 text-white flex justify-center items-center"
-                onClick={() => handleAppend(question)}
+                onClick={() =>
+                  append({
+                    content: question,
+                    role: "user",
+                    createdAt: new Date(),
+                    id: randomString(7),
+                  })
+                }
               >
                 {question}
               </button>
@@ -129,12 +141,12 @@ export function Chat({
 
       <form
         className="w-full flex justify-start items-center gap-x-2"
-        onSubmit={(e) => submitMessage(e)}
+        onSubmit={handleSubmit}
       >
         <button
           onClick={() => {
-            clearInput();
-            clearMessages();
+            setInput("");
+            setMessages([]);
           }}
           className="h-full w-12 rounded-lg flex justify-center items-center border boder-zinc-900"
           type="button"
@@ -151,7 +163,7 @@ export function Chat({
           className="w-full bg-transparent border border-zinc-900 rounded-md p-2 text-white"
           value={input}
           placeholder={isLoading ? "Sending..." : "Type your message..."}
-          onChange={(e) => changeInput(e)}
+          onChange={handleInputChange}
           disabled={isLoading}
         />
       </form>

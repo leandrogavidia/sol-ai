@@ -10,14 +10,11 @@ body {
   max-width: 1920px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   row-gap: 16px;
   margin: 0 auto;
-}
-
-a {
-  color: #14F195
+  
 }
 
 @layer utilities {

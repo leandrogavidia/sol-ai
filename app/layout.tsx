@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import { Header } from "./components/header";
+// import { Header } from "./components/header";
 import { Footer } from "./components/footer";
-import Providers from "./components/providers";
+// import Providers from "./components/providers";
 import "./globals.css";
-import "./blink.css"
+import "./blink.css";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -16,7 +16,6 @@ const geistMono = localFont({
   variable: "--font-geist-mono",
   weight: "100 900",
 });
-
 
 export const metadata: Metadata = {
   title: "Sol AI",
@@ -43,11 +42,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Providers>
-          <Header />
-          <main className="w-full h-full px-4">{children}</main>
-          <Footer />
-        </Providers>
+        {/* <Providers> */}
+        {/* <Header /> */}
+        <main className="w-full h-full px-4">{children}</main>
+        <Footer />
+        {/* </Providers> */}
       </body>
     </html>
   );
