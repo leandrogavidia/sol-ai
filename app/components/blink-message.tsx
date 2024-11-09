@@ -17,7 +17,7 @@ export function BlinkMessage({
   useEffect(() => {
     const getAction = async (m: Message) => {
       if (m.toolInvocations) {
-        const actionUrl = m.toolInvocations[0].args.actionUrl || "https://metapool-restaking-solana-action.shuttleapp.rs/api/restaking";
+        const actionUrl = m.toolInvocations[0].args.actionUrl;
         const action = await Action.fetch(actionUrl).catch(
           () => null
         );
@@ -32,7 +32,7 @@ export function BlinkMessage({
   }, [adapter, message]);
 
   return (
-    <>
+    <div className="w-full max-w-[446px] mx-auto pr-6">
       {action && isRegistryLoaded ? (
         <Blink
           action={action}
@@ -42,6 +42,6 @@ export function BlinkMessage({
       ) : (
         ""
       )}
-    </>
+    </div>
   );
 }

@@ -1,16 +1,7 @@
-// "use client";
-
-// import { ChangeEvent, FormEvent } from "react";
-// import { Chat } from "./components/chat";
 import Image from "next/image";
 import Link from "next/link";
-// import { useActionSolanaWalletAdapter } from "@dialectlabs/blinks/hooks/solana";
 
 export default function Home() {
-  // const { adapter } = useActionSolanaWalletAdapter(
-  //   process.env.NEXT_PUBLIC_RPC || ""
-  // );
-
   return (
     <div className="w-full h-full p-4 mx-auto flex flex-col text-center justify-center items-center px-4">
       <Image

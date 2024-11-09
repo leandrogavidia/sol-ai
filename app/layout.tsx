@@ -5,6 +5,8 @@ import { Footer } from "./components/footer";
 // import Providers from "./components/providers";
 import "./globals.css";
 import "./blink.css";
+import { Header } from "./components/header";
+import Providers from "./components/providers";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -42,11 +44,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {/* <Providers> */}
-        {/* <Header /> */}
+        <Providers>
+        <Header />
         <main className="w-full h-full px-4">{children}</main>
         <Footer />
-        {/* </Providers> */}
+        </Providers>
       </body>
     </html>
   );

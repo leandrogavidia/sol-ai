@@ -18,8 +18,12 @@ export async function POST(req: Request) {
 
   const query = messages.at(-1).content;
 
-  const url = "https://sol-ai-api.shuttleapp.rs/api/query";
-  const data = { message: query };
+  const url = `${process.env.SOL_AI_API}/query`;
+  const data = { 
+    query,
+    collection: "solana_projects",
+    n_results: 3
+   };
 
   const res = await fetch(url, {
     method: "POST",
@@ -32,10 +36,10 @@ export async function POST(req: Request) {
   const resData = await res.json();
   const documents = resData.content;
 
-  systemContent += "\n\n```";
-
-  for (let i = 0; i < documents.length; i++) {
-    systemContent += "\n" + documents[i];
+  if (documents) {
+    for (let i = 0; i < documents.length; i++) {
+      systemContent += "\n" + documents[i];
+    }
   }
 
   messages.push({
@@ -107,63 +111,65 @@ export async function POST(req: Request) {
       getBlink: tool({
         description: "Get the data in a Solana Action by a Solana Action URL.",
         parameters: z.object({
-          actionUrl: z.string().describe("Solana Action URL to get data to render a blink")
+          actionUrl: z
+            .string()
+            .describe("Solana Action URL to get data to render a blink"),
         }),
         execute: async ({ actionUrl }) => {
           try {
             const response = await fetch(actionUrl);
             const data = await response.json();
-  
+
             return {
               actionUrl: `solana-action:${actionUrl}`,
               actionData: {
                 title: data.title,
                 description: data.description,
-                disabled: data.disabled ? true : false
-              }
-            }
+                disabled: data.disabled ? true : false,
+              },
+            };
           } catch (e) {
-            console.error("ERROR GETTING Blink DATA", e);
+            console.error("ERROR GETTING BLINK DATA", e);
           }
-        }
+        },
       }),
       recommendBlinks: tool({
-        description: "Recommend some Blinks based on a project name such as Metapool.",
+        description: "Recommend some Blinks based on a message.",
         parameters: z.object({
-          projectName: z.string().describe("Project name for Blinks")
+          message: z.string().describe("Message for Blinks"),
         }),
-        execute: async ({ projectName }) => {
-          console.log(projectName);
-          const blink = {
-            "icon": "https://raw.githubusercontent.com/leandrogavidia/files/refs/heads/main/metapool-restaking.png",
-            "title": "Restake Aggregator",
-            "description": "Solana Restake Aggregator. To restake your LST tokens in Solana, such as mSOL, jitoSOL, bSOL, and receive mpSOL.",
-            "label": "Restake",
-            "links": {
-              "actions": [
-                {
-                  "label": "Restake",
-                  "href": "/api/restaking?amount={amount}&method=restake",
-                  "parameters": [
-                    {
-                      "label": "Amount",
-                      "name": "amount",
-                      "required": false
-                    }
-                  ]
-                }
-              ]
-            },
-            "disabled": false,
-            "error": null
-          }
+        execute: async ({ message }) => {
+          try {
+            const res = await fetch(`${process.env.SOL_AI_API}/query`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                query: message,
+                collection: "blinks",
+                n_results: 4,
+              }),
+            });
 
-          return {
-            actionUrl: "https://metapool-restaking-solana-action.shuttleapp.rs/api/restaking",
-            blink
+            const data = await res.json();
+            const content = data.content;
+
+            const actionUrlList = content
+              .map((str: string) => {
+                const match = str.match(/actionUrl: (https?:\/\/[^\s\n]+)/);
+                return match ? match[1] : null;
+              })
+              .filter((url: string) => url !== null);
+            return {
+              actionUrlList,
+              data,
+            };
+          } catch (e) {
+            console.error("ERROR GETTING BLINKS DATA", e);
           }
-        }
-      })
+        },
+      }),
     },
   });
 

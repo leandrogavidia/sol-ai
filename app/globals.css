@@ -6,9 +6,9 @@
   box-sizing: border-box;
 }
 
-*:focus {
-  outline: none;
-  outline: 2px solid #14F195;
+a {
+  color: #14F195;
+  text-decoration-line: underline;
 }
 
 body {
