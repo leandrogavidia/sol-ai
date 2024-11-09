@@ -88,7 +88,7 @@ export function FeedbackForm() {
           id="title"
           name="title"
           title="Title"
-          className="w-full rounded-md bg-zinc-900 min-h-8 px-2 text-white"
+          className="w-full rounded-md bg-zinc-900 min-h-9 px-2 text-white"
           placeholder="e.g. New feature..."
         />
         <span className="text-red-600">
@@ -121,7 +121,7 @@ export function FeedbackForm() {
           name="type"
           id="type"
           title="Type"
-          className="w-full rounded-md bg-zinc-900 min-h-8 px-2 text-white cursor-pointer"
+          className="w-full rounded-md bg-zinc-900 min-h-9 px-2 text-white cursor-pointer"
         >
           <option value="New feature">New feature</option>
           <option value="UI/UX">UX/UI</option>

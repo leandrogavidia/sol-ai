@@ -2,11 +2,12 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { SolanaWalletButton } from "./wallet";
 // import { SolanaWalletButton } from "./wallet";
 
 export function Header() {
   return (
-    <header className="w-full">
+    <header className="w-full mb-10">
       <div className="flex justify-between gap-x-4 items-center p-4 border-b border-zinc-900">
         <Link href="/">
           <Image
@@ -18,10 +19,11 @@ export function Header() {
             className="cursor-pointer max-w-20 h-auto w-full"
           />
         </Link>
+        <SolanaWalletButton />
+
         {/* <nav>
           <ul className="flex justify-center gap-x-3 items-center">
             <li>
-              <SolanaWalletButton />
             </li>
             <li>
               <Link className="text-white underline" href="/">
