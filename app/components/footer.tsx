@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export function Footer() {
   return (
-    <footer className="w-full p-4 flex justify-center items-center">
+    <footer className="mt-10 w-full p-4 flex justify-center items-center border-t-[1px] border-t-zinc-800">
       <ul className="flex justify-center items-center gap-x-4">
         <li>
           <Link href="https://discord.gg/qZZBnbgb" target="_blank">
