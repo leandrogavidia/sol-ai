@@ -36,7 +36,7 @@ export async function POST(req: Request) {
 
     await transporter.sendMail(mailOptions);
     return Response.json(
-      { message: "Email sent successfully" },
+      { message: "Email sent successfully!" },
       { status: 200 }
     );
   } catch (e) {
