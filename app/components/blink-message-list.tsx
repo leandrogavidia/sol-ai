@@ -46,7 +46,7 @@ export function BlinkMessageList({
   }, [adapter, message]);
 
   return (
-    <div className="grid grid-cols-2 gap-5 w-full">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 w-full">
       {actions.length > 0 && isRegistryLoaded
         ? actions.map((action) => (
             <Blink

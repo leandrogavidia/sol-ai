@@ -2,12 +2,15 @@ import { openai } from "@ai-sdk/openai";
 import { streamText, convertToCoreMessages, tool } from "ai";
 import { z } from "zod";
 
+export const runtime = "edge";
 export const maxDuration = 30;
 
 const HELIUS_RPC = process.env.HELIUS_RPC || "";
-export const runtime = "edge";
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY || "";
+const SOL_AI_API = process.env.SOL_AI_API || "";
+const SOL_AI_API_KEY = process.env.SOL_AI_API || "";
 
-if (!process.env.OPENAI_API_KEY || !HELIUS_RPC) {
+if (!OPENAI_API_KEY || !HELIUS_RPC || !SOL_AI_API || !SOL_AI_API_KEY) {
   throw new Error("Missing environment variables, check the .env.example file");
 }
 
@@ -18,7 +21,7 @@ export async function POST(req: Request) {
 
   const query = messages.at(-1).content;
 
-  const url = `${process.env.SOL_AI_API}/query`;
+  const url = `${SOL_AI_API}/query`;
   const data = { 
     query,
     collection: "solana_projects",
@@ -29,6 +32,7 @@ export async function POST(req: Request) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      "X-API-Key": SOL_AI_API_KEY,
     },
     body: JSON.stringify(data),
   });
@@ -140,10 +144,11 @@ export async function POST(req: Request) {
         }),
         execute: async ({ message }) => {
           try {
-            const res = await fetch(`${process.env.SOL_AI_API}/query`, {
+            const res = await fetch(`${SOL_AI_API}/query`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
+                "X-API-Key": SOL_AI_API_KEY,
               },
               body: JSON.stringify({
                 query: message,
