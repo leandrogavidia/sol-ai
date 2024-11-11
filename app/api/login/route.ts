@@ -8,7 +8,7 @@ export async function POST(req: Request) {
 
     if (!user?.id) {
         return Response.json(
-            { message: "User does not exist", result: null, success: false },
+            { message: "Incorrect email or password", result: null, success: false },
             { status: 404 }
           );
     }
