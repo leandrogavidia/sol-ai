@@ -7,7 +7,6 @@ import { useState } from "react";
 import { Spinner } from "../spinner";
 import { cn, createHash } from "@/app/lib/utils";
 import { login } from "@/app/actions";
-import { useRouter } from "next/navigation";
 
 enum LoginFormStatus {
   DEFAULT = "DEFAULT",
@@ -22,7 +21,6 @@ interface LoginForm {
 }
 
 export function LoginForm() {
-  const router = useRouter();
   const [status, setStatus] = useState<LoginFormStatus>(
     LoginFormStatus.DEFAULT
   );
@@ -69,7 +67,7 @@ export function LoginForm() {
           setMessage("");
           setStatus(LoginFormStatus.DEFAULT);
           reset();
-          router.push("/early-access")
+          location.reload()
         }
       } else if (resUser.status === 404) {
         setStatus(LoginFormStatus.NOT_FOUND);

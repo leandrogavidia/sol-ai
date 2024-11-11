@@ -81,19 +81,17 @@ export function SignUpForm() {
 
         const userData = await resSignUp.json();
 
-        if (resSignUp.ok) {
-          if (userData.success) {
-            setStatus(SignUpFormStatus.SUCCESS);
-            setMessage(userData.message); 
-          } else {
-            setStatus(SignUpFormStatus.SUCCESS);
-            setMessage(userData.message); 
-            reset();
-            router.push("/login");
-          }
+        if (resSignUp.status === 201) {
+          setStatus(SignUpFormStatus.SUCCESS);
+          setMessage(userData.message); 
+          router.push("/login");
+          reset();
+        } else if (resSignUp.status === 200) {
+          setStatus(SignUpFormStatus.SUCCESS);
+          setMessage(userData.message); 
         } else {
           setStatus(SignUpFormStatus.ERROR);
-          setMessage(userData.message);
+          setMessage(userData.message); 
         }
       } else if (res.status === 404) {
         setStatus(SignUpFormStatus.NOT_FOUND);
