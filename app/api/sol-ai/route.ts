@@ -8,7 +8,7 @@ export const maxDuration = 30;
 const HELIUS_RPC = process.env.HELIUS_RPC || "";
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY || "";
 const SOL_AI_API = process.env.SOL_AI_API || "";
-const SOL_AI_API_KEY = process.env.SOL_AI_API || "";
+const SOL_AI_API_KEY = process.env.SOL_AI_API_KEY || "";
 
 if (!OPENAI_API_KEY || !HELIUS_RPC || !SOL_AI_API || !SOL_AI_API_KEY) {
   throw new Error("Missing environment variables, check the .env.example file");
