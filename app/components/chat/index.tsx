@@ -63,6 +63,7 @@ export function Chat() {
           />
           <span className="font-semibold text-lg">Sol AI</span>
         </div>
+
         <div className="relative">
           <ChatOptions
             className="cursor-pointer"

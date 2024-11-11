@@ -1,7 +1,15 @@
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function Home() {
+export default async function Home() {
+  const session = await auth();
+    
+  if (session) {
+    redirect("/early-access");
+  }
+
   return (
     <div className="w-full h-full p-4 mx-auto flex flex-col text-center justify-center items-center px-4">
       <Image
@@ -31,22 +39,6 @@ export default function Home() {
           </button>
         </Link>
       </div>
-      {/* <div className="w-full h-full flex flex-col justify-start items-center gap-y-6">
-        <div className="min-h-11 bg-transparent border border-zinc-900 rounded-md p-2 w-full flex justify-start gap-x-3 items-center">
-          <Image
-            alt="Sol AI"
-            title="Sol AI"
-            src="/solana.svg"
-            width={16}
-            height={16}
-          />
-          <span className="font-semibold">Sol AI</span>
-        </div>
-        <Chat
-          model="sol-ai"
-          adapter={adapter}
-        />
-      </div> */}
     </div>
   );
 }

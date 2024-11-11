@@ -6,6 +6,7 @@ import {
 } from "@solana/wallet-adapter-react";
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import { WalletError } from "@solana/wallet-adapter-base";
+import { SessionProvider } from "next-auth/react";
 import React, { useCallback } from "react";
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -22,10 +23,12 @@ export default function Providers(props: React.PropsWithChildren) {
   }, []);
 
   return (
-    <ConnectionProvider endpoint={endpoint}>
-      <WalletProvider wallets={[]} onError={onError} autoConnect>
-        <WalletModalProvider>{props.children}</WalletModalProvider>
-      </WalletProvider>
-    </ConnectionProvider>
+    <SessionProvider>
+      <ConnectionProvider endpoint={endpoint}>
+        <WalletProvider wallets={[]} onError={onError} autoConnect>
+          <WalletModalProvider>{props.children}</WalletModalProvider>
+        </WalletProvider>
+      </ConnectionProvider>
+    </SessionProvider>
   );
 }

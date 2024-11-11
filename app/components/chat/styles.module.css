@@ -17,3 +17,8 @@
 .markdown p {
     display: block;
 }
+
+.markdown a {
+    color: #14F195;
+    text-decoration-line: underline;
+  }
