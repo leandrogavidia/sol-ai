@@ -4,15 +4,20 @@ import Image from "next/image";
 import styles from "./styles.module.css";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { Gemini } from "../icons/gemini";
-import { Gpt4oMini } from "../icons/gpt-4o-mini";
-import { UserChat } from "./types";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { BlinkMessage } from "../blink-message";
 import { useChat } from "ai/react";
-import { randomString } from "@/app/lib/random-string";
+import { cn, randomString } from "@/app/lib/utils";
+import { useActionSolanaWalletAdapter } from "@dialectlabs/blinks/hooks/solana";
+import { ChatOptions } from "../icons/chat-options";
+import { Trash } from "../icons/trash";
+import { BlinkMessageList } from "../blink-message-list";
 
-export function Chat({ model, adapter }: UserChat) {
+export function Chat() {
+  const [optionsOpen, setOptionsOpen] = useState(false);
+  const { adapter } = useActionSolanaWalletAdapter(
+    process.env.NEXT_PUBLIC_RPC || ""
+  );
   const {
     messages,
     input,
@@ -22,6 +27,7 @@ export function Chat({ model, adapter }: UserChat) {
     handleSubmit,
     append,
     setInput,
+    stop,
   } = useChat({
     api: `api/sol-ai`,
     maxSteps: 3,
@@ -36,24 +42,6 @@ export function Chat({ model, adapter }: UserChat) {
     "What communities do you recommend to learn how to program and about DeFi",
   ];
 
-  const assistantImage = useMemo(() => {
-    if (model === "gemini") {
-      return <Gemini />;
-    } else if (model === "gpt-4o-mini") {
-      return <Gpt4oMini />;
-    } else {
-      return (
-        <Image
-          alt="Sol AI"
-          title="Sol AI"
-          src="/solana.svg"
-          width={16}
-          height={16}
-        />
-      );
-    }
-  }, [model]);
-
   const filteredMessages = useMemo(() => {
     return messages.filter(
       (m) =>
@@ -62,10 +50,45 @@ export function Chat({ model, adapter }: UserChat) {
     );
   }, [messages]);
 
-  console.log(messages);
-
   return (
-    <div className="flex flex-col justify-between items-center gap-y-4 w-full min-h-72">
+    <div className="flex flex-col justify-between items-center gap-y-4 w-full min-h-72 max-w-[724px] mx-auto">
+      <div className="flex justify-between items-center gap-x-5 w-full mb-5">
+        <div className="flex justify-start items-center gap-x-3">
+          <Image
+            alt="Sol AI"
+            title="Sol AI"
+            src="/solana.svg"
+            width={24}
+            height={24}
+          />
+          <span className="font-semibold text-lg">Sol AI</span>
+        </div>
+
+        <div className="relative">
+          <ChatOptions
+            className="cursor-pointer"
+            onClick={() => setOptionsOpen(!optionsOpen)}
+          />
+          <ul
+            className={cn(
+              "absolute top-4 right-0 bg-zinc-950 border border-zinc-900 min-h-max min-w-max px-4 py-2 rounded-lg cursor-pointer",
+              optionsOpen ? "block" : "hidden"
+            )}
+          >
+            <li
+              onClick={() => {
+                setInput("");
+                setMessages([]);
+                setOptionsOpen(false);
+              }}
+              className="flex justify-start items-center gap-x-2"
+            >
+              <Trash className="fill-red-600" />
+              <span className="text-red-600">Clear chat</span>
+            </li>
+          </ul>
+        </div>
+      </div>
       <div className="min-h-[340px] max-h-[340px] w-full flex flex-col items-start justify-start overflow-auto gap-y-4">
         {messages.length > 0 ? (
           <>
@@ -75,11 +98,17 @@ export function Chat({ model, adapter }: UserChat) {
               return (
                 <div
                   key={m.id}
-                  className="flex flex-row justify-start items-start gap-x-6 w-full [&>div:nth-child(2)]:w-full [&>div:nth-child(2)]:max-w-[446px] [&>div:nth-child(2)]:mx-auto [&>div:nth-child(2)]:pr-6"
+                  className="flex flex-row justify-start items-start gap-x-6 w-full"
                 >
                   <div className="flex justify-start items-start gap-x-2">
                     {isAssistant ? (
-                      assistantImage
+                      <Image
+                        alt="Sol AI"
+                        title="Sol AI"
+                        src="/solana.svg"
+                        width={16}
+                        height={16}
+                      />
                     ) : (
                       <Image
                         src="/user.png"
@@ -99,18 +128,17 @@ export function Chat({ model, adapter }: UserChat) {
                     </span>
                   </div>
 
-                  {model === "sol-ai" &&
-                  isAssistant &&
+                  {isAssistant &&
                   m.toolInvocations &&
                   m.toolInvocations[0].toolName === "getBlink" ? (
                     <BlinkMessage message={m} adapter={adapter} />
                   ) : null}
 
-                  {model === "sol-ai" &&
-                  isAssistant &&
+                  {isAssistant &&
                   m.toolInvocations &&
-                  m.toolInvocations[0].toolName === "recommendBlinks" ? (
-                    <BlinkMessage message={m} adapter={adapter} />
+                  m.toolInvocations[0].toolName === "recommendBlinks" &&
+                  'result' in m.toolInvocations[0]  ? (
+                    <BlinkMessageList message={m} adapter={adapter} />
                   ) : null}
                 </div>
               );
@@ -118,7 +146,7 @@ export function Chat({ model, adapter }: UserChat) {
           </>
         ) : (
           <div className="flex flex-col justify-center items-center gap-y-3 w-full max-w-[66%] mx-auto">
-            {suggestedQuestions.map((question) => (
+            {suggestedQuestions.map((question) => ( 
               <button
                 type="button"
                 key={question}
@@ -143,29 +171,27 @@ export function Chat({ model, adapter }: UserChat) {
         className="w-full flex justify-start items-center gap-x-2"
         onSubmit={handleSubmit}
       >
-        <button
-          onClick={() => {
-            setInput("");
-            setMessages([]);
-          }}
-          className="h-full w-12 rounded-lg flex justify-center items-center border boder-zinc-900"
-          type="button"
-        >
-          <Image
-            alt="Trash"
-            title="Trash"
-            src="/trash.svg"
-            width={16}
-            height={16}
+        <div className="w-full border border-zinc-900 rounded-md px-2 py-1 bg-transparent min-h-10 flex justify-between items-center gap-x-5">
+          <input
+            className={cn(
+              "outline-none w-full bg-transparent p-2 text-white resize-none h-10",
+              isLoading && "select-none pointer-events-none cursor-default"
+            )}
+            value={input}
+            placeholder={isLoading ? "Sending..." : "Type your message..."}
+            onChange={handleInputChange}
+            disabled={isLoading}
           />
-        </button>
-        <input
-          className="w-full bg-transparent border border-zinc-900 rounded-md p-2 text-white"
-          value={input}
-          placeholder={isLoading ? "Sending..." : "Type your message..."}
-          onChange={handleInputChange}
-          disabled={isLoading}
-        />
+          <div
+            onClick={() => stop()}
+            className={cn(
+              "p-1 justify-center items-center min-h-7 min-w-7 rounded-full bg-solana-purple cursor-pointer",
+              isLoading ? "flex" : "hidden"
+            )}
+          >
+            <div className="size-3 bg-white"></div>
+          </div>
+        </div>
       </form>
     </div>
   );
