@@ -46,7 +46,7 @@ export default function RootLayout({
       >
         <Providers>
         <Header />
-        <main className="w-full h-full px-4">{children}</main>
+        <main className="w-full h-full px-4 min-h-screen-minus-190 flex justify-center items-center">{children}</main>
         <Footer />
         </Providers>
       </body>

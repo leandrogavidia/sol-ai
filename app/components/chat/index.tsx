@@ -51,7 +51,7 @@ export function Chat() {
   }, [messages]);
 
   return (
-    <div className="flex flex-col justify-between items-center gap-y-4 w-full min-h-72 max-w-[724px] mx-auto">
+    <div className="flex flex-col justify-between items-center gap-y-4 w-full min-h-screen-minus-190 max-w-[724px] h-full mx-auto">
       <div className="flex justify-between items-center gap-x-5 w-full mb-5">
         <div className="flex justify-start items-center gap-x-3">
           <Image
@@ -89,7 +89,7 @@ export function Chat() {
           </ul>
         </div>
       </div>
-      <div className="min-h-[340px] max-h-[340px] w-full flex flex-col items-start justify-start overflow-auto gap-y-4">
+      <div className="min-h-[340px] w-full flex flex-col items-start justify-start overflow-auto gap-y-4">
         {messages.length > 0 ? (
           <>
             {filteredMessages.map((m) => {

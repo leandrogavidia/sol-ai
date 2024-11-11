@@ -10,7 +10,7 @@ export default async function EarlyAccess() {
     }
   
     return (
-        <section>
+        <section className="w-full h-full min-h-screen-minus-190">
             <Chat />
         </section>
     )
