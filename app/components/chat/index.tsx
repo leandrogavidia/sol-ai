@@ -89,7 +89,7 @@ export function Chat() {
           </ul>
         </div>
       </div>
-      <div className="min-h-[340px] w-full flex flex-col items-start justify-start overflow-auto gap-y-4">
+      <div className="min-h-[340px] max-h-[400px] w-full flex flex-col items-start justify-start overflow-auto gap-y-4">
         {messages.length > 0 ? (
           <>
             {filteredMessages.map((m) => {
