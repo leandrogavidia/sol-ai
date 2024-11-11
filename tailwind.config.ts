@@ -14,6 +14,9 @@ const config: Config = {
         background: "#000",
         foreground: "#fff"
       },
+      minHeight: {
+        'screen-minus-190': 'calc(100svh - 190px)',
+      }
     },
   },
   plugins: [],

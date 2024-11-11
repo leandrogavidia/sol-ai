@@ -10,7 +10,7 @@ export default async function Login() {
     }
     
     return (
-        <section className="mx-auto max-w-[600px]">
+        <section className="mx-auto max-w-[600px] w-full">
             <h1 className="text-4xl font-bold mb-5">Login</h1>
             <LoginForm />
         </section>
