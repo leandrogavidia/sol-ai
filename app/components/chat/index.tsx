@@ -12,6 +12,7 @@ import { useActionSolanaWalletAdapter } from "@dialectlabs/blinks/hooks/solana";
 import { ChatOptions } from "../icons/chat-options";
 import { Trash } from "../icons/trash";
 import { BlinkMessageList } from "../blink-message-list";
+import { MkLink } from "../markdown/mk-link";
 
 export function Chat() {
   const [optionsOpen, setOptionsOpen] = useState(false);
@@ -122,6 +123,9 @@ export function Chat() {
                       <ReactMarkdown
                         remarkPlugins={[remarkGfm]}
                         className={styles.markdown}
+                        components={{
+                          a: MkLink
+                        }}
                       >
                         {m.content}
                       </ReactMarkdown>
