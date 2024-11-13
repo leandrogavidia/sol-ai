@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { cn } from "@/app/lib/utils";
 import { Spinner } from "../spinner";
+import { useSession } from "next-auth/react";
 
 type FeedbackType = "New feature" | "UI/UX" | "New project" | "Error" | "Other";
 enum FeedbackStatus {
@@ -21,6 +22,7 @@ interface Feedback {
 }
 
 export function FeedbackForm() {
+  const { data: session } = useSession()
   const [status, setStatus] = useState<FeedbackStatus>(FeedbackStatus.DEFAULT);
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -52,7 +54,7 @@ export function FeedbackForm() {
           title,
           feedback,
           type,
-          email: "solaitest@gmail.com",
+          email: session?.user?.email,
         }),
       });
       const data = await res.json();
