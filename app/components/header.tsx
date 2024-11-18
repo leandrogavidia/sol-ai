@@ -56,7 +56,7 @@ export function Header() {
             >
               {status === "authenticated" ? (
                 <ul className="flex flex-col justify-center gap-3 items-start bg-zinc-900 px-4 py-3 rounded-md">
-                  <li>
+                  <li onClick={() => setIsOpen(!isOpen)}>
                     <Link
                       className="text-white underline hover:text-solana-green transition-all"
                       href="/early-access/"
@@ -64,7 +64,7 @@ export function Header() {
                       Chat
                     </Link>
                   </li>
-                  <li>
+                  <li onClick={() => setIsOpen(!isOpen)}>
                     <Link
                       className="text-white underline hover:text-solana-green transition-all"
                       href="/early-access/feedback"
@@ -72,7 +72,7 @@ export function Header() {
                       Feedback
                     </Link>
                   </li>
-                  <li>
+                  <li onClick={() => setIsOpen(!isOpen)}>
                     <p
                       className="text-white underline hover:text-solana-green transition-all cursor-pointer"
                       onClick={() => {
