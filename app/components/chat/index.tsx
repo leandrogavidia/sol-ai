@@ -134,6 +134,22 @@ export function Chat() {
 
                   {isAssistant &&
                   m.toolInvocations &&
+                  m.toolInvocations[0].toolName === "radarHackathonProjects" ? (
+                    <div className="w-[90%] min-h-10 bg-yellow-500 rounded-md px-4 py-2">
+                      <p className="text-md text-black"><span className="font-semibold">Radar Hackathon</span> - The projects presented may not be developed further.</p>
+                    </div>
+                  ) : null}
+
+                  {isAssistant &&
+                  m.toolInvocations &&
+                  m.toolInvocations[0].toolName === "renaissanceHackathonProjects" ? (
+                    <div className="w-[90%] min-h-10 bg-purple-500 rounded-md px-4 py-2">
+                      <p className="text-md text-black"><span className="font-semibold">Renaissance Hackathon</span> - The projects presented may not be developed further.</p>
+                    </div>
+                  ) : null}
+
+                  {isAssistant &&
+                  m.toolInvocations &&
                   m.toolInvocations[0].toolName === "getBlink" ? (
                     <BlinkMessage message={m} adapter={adapter} />
                   ) : null}
