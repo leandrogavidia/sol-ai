@@ -14,7 +14,7 @@
     "@ai-sdk/google": "1.0.12",
     "@ai-sdk/openai": "1.0.12",
     "@auth/prisma-adapter": "^2.7.3",
-    "@dialectlabs/blinks": "0.18.3",
+    "@dialectlabs/blinks": "0.13.1",
     "@hookform/resolvers": "^3.9.1",
     "@prisma/client": "^5.22.0",
     "@solana/wallet-adapter-react": "^0.15.35",
