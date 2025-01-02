@@ -48,12 +48,13 @@ export async function POST(req: Request) {
       }
     }
   
-    messages.push({
+    messages.unshift({
       role: "system",
       content: systemContent,
+      id: ""
     });
   
-    const result = await streamText({
+    const result = streamText({
       model: openai("gpt-4o-mini"),
       messages: convertToCoreMessages(messages),
       maxTokens: 1024,
@@ -174,6 +175,68 @@ export async function POST(req: Request) {
               };
             } catch (e) {
               console.error("ERROR GETTING BLINKS DATA", e);
+            }
+          },
+        }),
+        radarHackathonProjects: tool({
+          description: "Show Radar hackathon projects based on a message.",
+          parameters: z.object({
+            message: z.string().describe("Message for Radar hackathon projects"),
+          }),
+          execute: async ({ message }) => {
+            try {
+              const res = await fetch(`${SOL_AI_API}/query`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "X-API-Key": SOL_AI_API_KEY,
+                },
+                body: JSON.stringify({
+                  query: message,
+                  collection: "radar-hackathon-projects",
+                  n_results: 20,
+                }),
+              });
+  
+              const data = await res.json();
+              const content = data.content;
+
+              return {
+                content
+              };
+            } catch (e) {
+              console.error("ERROR GETTING RADAR HACKATHON PROJECTS DATA", e);
+            }
+          },
+        }),
+        renaissanceHackathonProjects: tool({
+          description: "Show Renaissance hackathon projects based on a message.",
+          parameters: z.object({
+            message: z.string().describe("Message for Renaissance hackathon projects"),
+          }),
+          execute: async ({ message }) => {
+            try {
+              const res = await fetch(`${SOL_AI_API}/query`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "X-API-Key": SOL_AI_API_KEY,
+                },
+                body: JSON.stringify({
+                  query: message,
+                  collection: "renaissance-hackathon-projects",
+                  n_results: 20,
+                }),
+              });
+  
+              const data = await res.json();
+              const content = data.content;
+
+              return {
+                content
+              };
+            } catch (e) {
+              console.error("ERROR GETTING RENAISSANCE HACKATHON PROJECTS DATA", e);
             }
           },
         }),
