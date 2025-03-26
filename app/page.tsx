@@ -19,6 +19,7 @@ export default async function Home() {
         title="Logo"
         alt="Logo"
         className="cursor-pointer max-w-36 h-auto w-full"
+        priority
       />
       <div className="mt-6">
         <h1 className="text-2xl font-semibold">The AI of Solana</h1>
