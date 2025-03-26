@@ -124,7 +124,7 @@ export default function RootLayout({
       >
         <Providers>
         <Header />
-        <main className="font-diatype w-full h-full px-4 min-h-screen-minus-190 flex justify-center items-center">{children}</main>
+        <main className="font-diatype w-full h-full px-5 min-h-screen-minus-190">{children}</main>
         <Footer />
         </Providers>
       </body>
