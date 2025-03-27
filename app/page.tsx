@@ -1,6 +1,5 @@
 
 import { ContextOption } from "./components/context-option";
-import { Plus } from "./components/icons/plus";
 import { QuestionItem } from "./components/question-item";
 
 export default async function Home() {
@@ -10,11 +9,11 @@ export default async function Home() {
     "Blinks"
   ]
 
-  const questions = [
+  const questionList = [
     {
-      title: "",
-      content: ""
-    }
+      title: "What is Sol AI?",
+      content: "Sol AI is an AI chatbot that empowers users to learn about the Solana ecosystem. Whether you're a beginner or a seasoned pro, Sol AI helps you navigate and understand Solana, and makes onboarding new users seamless."
+    },
   ]
   return (
     <>
@@ -38,11 +37,10 @@ export default async function Home() {
         <h2 className="text-4xl font-bold">Sol AI FAQs</h2>
         <h3 className="text-xl font-normal mt-4">Frequently asked questions</h3>
         <div className="w-full flex flex-col justify-center items-start gap-y-5 my-12">
-            <QuestionItem title="Question 01" content="Lorem ipsum dolor sit amet consectetur adipisicing elit. Placeat nesciunt velit illum deleniti, minus necessitatibus facilis soluta sint quibusdam facere at inventore suscipit quam quos architecto. Laboriosam nesciunt aut tenetur!" />
-            
+            {
+              questionList.map(({ title, content }) => <QuestionItem title={title} content={content} key={title} />)
+            }
         </div>
-
-
       </section>
     </>
   );
