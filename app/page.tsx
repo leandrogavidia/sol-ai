@@ -14,6 +14,14 @@ export default async function Home() {
       title: "What is Sol AI?",
       content: "Sol AI is an AI chatbot that empowers users to learn about the Solana ecosystem. Whether you're a beginner or a seasoned pro, Sol AI helps you navigate and understand Solana, and makes onboarding new users seamless."
     },
+    {
+      title: "Can Sol AI generate images, or is its function limited to providing information?",
+      content: "Sol AI, based on a large language model (LLM), specializes in processing and generating text. Therefore, its primary function is to provide information and answer questions, and it is not designed to create images."
+    },
+    {
+      title: "Is Sol AI limited to providing information about Solana?",
+      content: "No, Sol AI can provide information about other blockchains and topics beyond Solana. What sets Sol AI apart is that it has been optimized and connected with specialized and up-to-date information and projects within the Solana ecosystem, such as Blinks."
+    },
   ]
   return (
     <>

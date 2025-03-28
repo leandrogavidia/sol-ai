@@ -11,7 +11,7 @@ export function QuestionItem({ title, content }: { title: string, content: strin
             <div className="w-full flex justify-between items-center gap-x-5 cursor-pointer" onClick={() => setIsOpen(!isOpen)} >
                 <p className="text-xl font-medium">{title}</p>
                 {
-                    isOpen ? <Minus className="fill-white" /> : <Plus className="fill-white" />
+                    isOpen ? <Minus className="fill-white min-w-6 min-h-6" /> : <Plus className="fill-white min-w-6 min-h-6" />
                 }
             </div>
 
