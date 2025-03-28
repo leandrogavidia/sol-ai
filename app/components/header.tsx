@@ -7,7 +7,7 @@ import { signOut, useSession } from "next-auth/react";
 import { useState } from "react";
 
 export function Header() {
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const [isOpen, setIsOpen] = useState(false);
   return (
     <header className="w-full mb-10 p-5 pb-0 md:p-10 md:pb-0">
