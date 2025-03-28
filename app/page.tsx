@@ -31,9 +31,9 @@ export default async function Home() {
         <p className="text-base font-light">Sol AI is the bridge that connects people with the Solana ecosystem: projects, communities, hackathons, blinks, and much more. Our goal is to facilitate learning about the ecosystem and help onboard more users. To achieve this, we use an LLM assistant that allows anyone to obtain up-to-date information about Solana projects and innovations.</p>
       </section>
 
-      <section className="my-20 flex flex-col justify-center items-start text-left">
-        <h2 className="text-4xl font-bold">Specialized context in Solana</h2>
-        <h3 className="text-xl font-normal mt-4">We keep adding</h3>
+      <section className="w-full my-20 flex flex-col justify-center items-start text-left">
+          <h2 className="text-4xl font-bold">Specialized context in Solana</h2>
+          <h3 className="text-xl font-normal mt-4">We keep adding</h3>
         <div className="w-full flex flex-col justify-center items-start gap-y-5 mt-12">
           {
             contextOptionList.map((item) => <ContextOption text={item} key={item} />)
@@ -41,10 +41,13 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="flex flex-col justify-center items-start text-left">
-        <h2 className="text-4xl font-bold">Sol AI FAQs</h2>
-        <h3 className="text-xl font-normal mt-4">Frequently asked questions</h3>
-        <div className="w-full flex flex-col justify-center items-start gap-y-5 my-12">
+      <section className="flex flex-col justify-center items-start text-left md:grid md:grid-cols-[1fr_2fr] md:gap-x-10">
+        <div>
+          <h2 className="text-4xl font-bold">Sol AI FAQs</h2>
+          <h3 className="text-xl font-normal mt-4 md:mt-0">Frequently asked questions</h3>
+
+        </div>
+        <div className="w-full flex flex-col justify-center items-start gap-y-5 my-12 md:mt-0">
             {
               questionList.map(({ title, content }) => <QuestionItem title={title} content={content} key={title} />)
             }

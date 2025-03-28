@@ -20,7 +20,7 @@ export function Footer() {
     },
   ]
   return (
-    <footer className="w-full px-5 pt-0 pb-14 flex flex-col gap-y-10 justify-center items-start">
+    <footer className="w-full px-5 pt-0 pb-14 flex flex-col gap-y-10 justify-center items-start md:flex-row md:justify-between md:items-center md:mt-16 md:px-10">
       <div className="flex justify-start items-center gap-x-2">
         <Image
           src="/logo.png"
@@ -28,7 +28,7 @@ export function Footer() {
           height={210}
           title="Logo"
           alt="Logo"
-          className="cursor-pointer max-w-10 h-auto w-full"
+          className="max-w-10 h-auto w-full"
           priority
         />
         <span className="font-normal text-sm">© 2025 Sol AI</span>
