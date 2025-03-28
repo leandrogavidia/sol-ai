@@ -8,11 +8,13 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        diatype: ['var(--font-diatype)'],
+      },
       colors: {
         "solana-purple": "#9945FF",
         "solana-green": "#14F195",
-        background: "#000",
-        foreground: "#fff"
+        background: "#121212",
       },
       minHeight: {
         'screen-minus-190': 'calc(100svh - 190px)',

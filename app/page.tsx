@@ -1,44 +1,58 @@
-import { auth } from "@/auth";
-import { redirect } from "next/navigation";
-import Image from "next/image";
-import Link from "next/link";
+
+import { ContextOption } from "./components/context-option";
+import { QuestionItem } from "./components/question-item";
 
 export default async function Home() {
-  const session = await auth();
-    
-  if (session) {
-    redirect("/early-access");
-  }
+  const contextOptionList = [
+    "Projects & communities",
+    "Hackathones",
+    "Blinks"
+  ]
 
+  const questionList = [
+    {
+      title: "What is Sol AI?",
+      content: "Sol AI is an AI chatbot that empowers users to learn about the Solana ecosystem. Whether you're a beginner or a seasoned pro, Sol AI helps you navigate and understand Solana, and makes onboarding new users seamless."
+    },
+    {
+      title: "Can Sol AI generate images, or is its function limited to providing information?",
+      content: "Sol AI, based on a large language model (LLM), specializes in processing and generating text. Therefore, its primary function is to provide information and answer questions, and it is not designed to create images."
+    },
+    {
+      title: "Is Sol AI limited to providing information about Solana?",
+      content: "No, Sol AI can provide information about other blockchains and topics beyond Solana. What sets Sol AI apart is that it has been optimized and connected with specialized and up-to-date information and projects within the Solana ecosystem, such as Blinks."
+    },
+  ]
   return (
-    <div className="w-full h-full p-4 mx-auto flex flex-col text-center justify-center items-center px-4">
-      <Image
-        src="/logo.png"
-        width={854}
-        height={210}
-        title="Logo"
-        alt="Logo"
-        className="cursor-pointer max-w-36 h-auto w-full"
-      />
-      <div className="mt-6">
-        <h1 className="text-2xl font-semibold">The AI of Solana</h1>
-        <h2 className="text-lg">AI-powered Solana virtual assistant</h2>
-      </div>
-      <div className="flex justify-center items-center gap-x-5 mt-8">
-        <Link
-          href="https://drive.google.com/file/d/1NIviRcoH2NS4yvge6yWiQzOCaLRLl0YL/view"
-          target="_blank"
-        >
-          <button className="border border-white text-white flex justify-center items-center min-h-10 px-4 py-2 rounded-md transition-all font-semibold hover:bg-white hover:text-black ">
-            Watch video demo
-          </button>
-        </Link>
-        <Link href="https://forms.gle/zpT1tK7KKXeiSzCh8" target="_blank">
-          <button className="border border-white text-black bg-white flex justify-center items-center min-h-10 px-4 py-2 rounded-md transition-all font-semibold hover:bg-transparent hover:text-white ">
-            Get early access
-          </button>
-        </Link>
-      </div>
-    </div>
+    <>
+      <section className="mt-16 flex flex-col justify-center items-start text-left">
+        <h1 className="text-4xl font-bold">The AI of Solana</h1>
+        <h2 className="text-xl font-normal mt-4 mb-7">AI-powered Solana virtual assistant</h2>
+        <p className="text-base font-light">Sol AI is the bridge that connects people with the Solana ecosystem: projects, communities, hackathons, blinks, and much more. Our goal is to facilitate learning about the ecosystem and help onboard more users. To achieve this, we use an LLM assistant that allows anyone to obtain up-to-date information about Solana projects and innovations.</p>
+      </section>
+
+      <section className="w-full my-20 flex flex-col justify-center items-start text-left">
+          <h2 className="text-4xl font-bold">Specialized context in Solana</h2>
+          <h3 className="text-xl font-normal mt-4">We keep adding</h3>
+        <div className="w-full flex flex-col justify-center items-start gap-y-5 mt-12">
+          {
+            contextOptionList.map((item) => <ContextOption text={item} key={item} />)
+          }
+        </div>
+      </section>
+
+      <section className="flex flex-col justify-center items-start text-left md:grid md:grid-cols-[1fr_2fr] md:gap-x-10">
+        <div>
+          <h2 className="text-4xl font-bold">Sol AI FAQs</h2>
+          <h3 className="text-xl font-normal mt-4 md:mt-0">Frequently asked questions</h3>
+
+        </div>
+        <div className="w-full flex flex-col justify-center items-start gap-y-5 my-12 md:mt-0">
+            {
+              questionList.map(({ title, content }) => <QuestionItem title={title} content={content} key={title} />)
+            }
+        </div>
+      </section>
+    </>
   );
 }
