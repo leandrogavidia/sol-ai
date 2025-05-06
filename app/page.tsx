@@ -6,7 +6,8 @@ export default async function Home() {
   const contextOptionList = [
     "Projects & communities",
     "Hackathones",
-    "Blinks"
+    "Blinks",
+    "More to come soon..."
   ]
 
   const questionList = [
@@ -31,10 +32,25 @@ export default async function Home() {
         <p className="text-base font-light">Sol AI is the bridge that connects people with the Solana ecosystem: projects, communities, hackathons, blinks, and much more. Our goal is to facilitate learning about the ecosystem and help onboard more users. To achieve this, we use an LLM assistant that allows anyone to obtain up-to-date information about Solana projects and innovations.</p>
       </section>
 
-      <section className="w-full my-20 flex flex-col justify-center items-start text-left">
+      <section className="w-full md:grid md:grid-cols-2 md:gap-x-10">
+        <div className="mt-16">
+          <h2 className="text-4xl font-bold">Mission</h2>
+          <p className="text-base font-light mt-4">Accelerate the learning and onboarding process for people on Solana.</p>
+        </div>
+
+        <div className="mt-16">
+          <h2 className="text-4xl font-bold">Vision</h2>
+          <p className="text-base font-light mt-4">To be the leading virtual assistant for Solana.</p>
+        </div>
+      </section>
+
+
+      <section className="w-full my-20 flex flex-col justify-center items-start text-left md:grid md:grid-cols-2 md:gap-x-10 md:my-24 border-y-2 border-y-zinc-800 py-8">
+        <div>
           <h2 className="text-4xl font-bold">Specialized context in Solana</h2>
           <h3 className="text-xl font-normal mt-4">We keep adding</h3>
-        <div className="w-full flex flex-col justify-center items-start gap-y-5 mt-12">
+        </div>
+        <div className="w-full flex flex-col justify-center items-start gap-y-5 mt-12 md:mt-0">
           {
             contextOptionList.map((item) => <ContextOption text={item} key={item} />)
           }
@@ -48,9 +64,9 @@ export default async function Home() {
 
         </div>
         <div className="w-full flex flex-col justify-center items-start gap-y-5 my-12 md:mt-0">
-            {
-              questionList.map(({ title, content }) => <QuestionItem title={title} content={content} key={title} />)
-            }
+          {
+            questionList.map(({ title, content }) => <QuestionItem title={title} content={content} key={title} />)
+          }
         </div>
       </section>
     </>
