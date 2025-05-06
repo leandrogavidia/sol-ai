@@ -1,6 +1,16 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+:root {
+  --solana-purple: #9945FF;
+  --solana-green: #14F195;
+  --background: #121212;
+}
+
+@theme inline {
+  --color-solana-purple: var(--solana-purple);
+  --color-solana-green: var(--solana-green);
+  --color-background: var(--background);
+}
 
 * {
   box-sizing: border-box;
@@ -8,17 +18,11 @@
 
 body {
   color: #fff;
-  background: #000;
+  background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
   min-height: 100vh;
   max-width: 1920px;
   margin: 0 auto;
-}
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
 }
 
 .wallet-adapter-button-trigger {
@@ -29,6 +33,7 @@ body {
   padding-left: 16px !important;
   padding-right: 16px !important;
 }
+
 .wallet-adapter-dropdown-list,
 .wallet-adapter-button {
   font-family: inherit !important;
