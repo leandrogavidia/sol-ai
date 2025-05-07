@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
 import { Footer } from "./components/footer";
 import "./globals.css";
 import "./blink.css";
 import { Header } from "./components/header";
 import Providers from "./components/providers";
+import localFont from "next/font/local";
 
 const diatype = localFont({
   src: [
@@ -124,7 +124,7 @@ export default function RootLayout({
       >
         <Providers>
         <Header />
-        <main className="font-diatype w-full h-full px-5 min-h-screen-minus-190 md:px-10">{children}</main>
+        <main className="w-full h-full px-5 min-h-screen-minus-190 md:px-10">{children}</main>
         <Footer />
         </Providers>
       </body>
