@@ -19,7 +19,7 @@
 body {
   color: #fff;
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Diatype";
   min-height: 100vh;
   max-width: 1920px;
   margin: 0 auto;
