@@ -3,12 +3,17 @@ import { Discord } from "./icons/discord";
 import { X } from "./icons/x";
 import { Instagram } from "./icons/instagram";
 import Image from "next/image";
+import { GitHub } from "./icons/github";
 
 export function Footer() {
   const socialMedia = [
     {
       link: "https://x.com/_sol_ai",
       icon: <X className="fill-white" />
+    },
+    {
+      link: "https://github.com/Sol-AI-Lab",
+      icon: <GitHub className="fill-white" />
     },
     {
       link: "https://discord.gg/qZZBnbgb",
