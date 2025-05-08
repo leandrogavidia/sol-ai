@@ -25,10 +25,10 @@ The site connects to the [**Sol AI API**](https://github.com/leandrogavidia/sol-
 ## Getting Started
 
 1. `git clone`
-2. `npm i`
+2. `pnpm install`
 3. create a `.env` file with the following env variables:
     - `OPENAI_API_KEY`
     - `GOOGLE_GENERATIVE_AI_API_KEY`
     - `HELIUS_RPC`
     - `NEXT_PUBLIC_RPC`
-3. `npm run dev`
+3. `pnpm run dev`
