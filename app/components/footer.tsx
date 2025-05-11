@@ -16,7 +16,8 @@ export function Footer() {
       icon: <GitHub className="fill-white" />
     },
     {
-      link: "https://discord.gg/qZZBnbgb",
+
+      link: "https://discord.gg/RJAXrMAG",
       icon: <Discord className="fill-white" />
     },
     {
@@ -50,7 +51,6 @@ export function Footer() {
             </li>
           ))
         }
-
       </ul>
     </footer>
   );

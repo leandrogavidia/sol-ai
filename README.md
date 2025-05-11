@@ -6,17 +6,15 @@
   <h3>AI-powered solana virtual assistant. Accelerating new users onboarding to Solana.</h3>
 </div>
 
-
 ## Features
 
 1. Customized contexts on Solana
 2. Real-time data on fungible and non-fungible tokens
 3. Able to interpret and display blinks
-4. Hackathons
 
 ## Demo
 
-[**Website**](https://sol-ai.app/)
+[**Website**](https://sol-ai-kappa.vercel.app/)
 
 ## Getting Started
 
