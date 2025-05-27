@@ -4,54 +4,57 @@ import { X } from "./icons/x";
 import { Instagram } from "./icons/instagram";
 import Image from "next/image";
 import { GitHub } from "./icons/github";
+import { config } from "@/lib/config";
 
 export function Footer() {
   const socialMedia = [
     {
-      link: "https://x.com/_sol_ai",
-      icon: <X className="fill-white" />
+      link: config.socialMedia.x,
+      icon: <X className="fill-white hover:fill-solana-purple transition-colors" />
     },
     {
-      link: "https://github.com/Sol-AI-Lab",
-      icon: <GitHub className="fill-white" />
+      link: config.socialMedia.github,
+      icon: <GitHub className="fill-white hover:fill-solana-purple transition-colors" />
     },
     {
-      link: "https://discord.gg/qZZBnbgb",
-      icon: <Discord className="fill-white" />
+      link: config.socialMedia.discord,
+      icon: <Discord className="fill-white hover:fill-solana-purple transition-colors" />
     },
     {
-      link: "https://instagram.com/_sol_ai",
-      icon: <Instagram className="fill-white" />
+      link: config.socialMedia.instagram,
+      icon: <Instagram className="fill-white hover:fill-solana-purple transition-colors" />
     },
   ]
   return (
-    <footer className="w-full px-5 pt-0 pb-14 flex flex-col gap-y-10 justify-center items-start md:flex-row md:justify-between md:items-center md:mt-16 md:px-10">
-      <div className="flex justify-start items-center gap-x-2">
-        <Image
-          src="/logo.png"
-          width={854}
-          height={210}
-          title="Logo"
-          alt="Logo"
-          className="max-w-10 h-auto w-full"
-          priority
-        />
-        <span className="font-normal text-sm">© 2025 Sol AI</span>
-      </div>
-      <ul className="flex justify-center items-center gap-x-5">
-        {
-          socialMedia.map(({ link, icon }) => (
-            <li key={link}>
-              <Link href={link} target="_blank">
-                <span className="[&>svg]:h-5 [&>svg]:w-5">
-                  {icon}
-                </span>
-              </Link>
-            </li>
-          ))
-        }
+    <footer className="px-6 py-12 max-w-7xl mx-auto border-t border-gray-800 relative">
+      <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="flex justify-start items-center gap-x-2">
+          <Image
+            src="/logo.png"
+            width={854}
+            height={210}
+            title="Logo"
+            alt="Logo"
+            className="max-w-10 h-auto w-full"
+            priority
+          />
+          <span className="font-normal text-sm">© 2025 Sol AI</span>
+        </div>
+        <ul className="flex justify-center items-center gap-x-5">
+          {
+            socialMedia.map(({ link, icon }) => (
+              <li key={link}>
+                <Link href={link} target="_blank">
+                  <span className="[&>svg]:h-5 [&>svg]:w-5">
+                    {icon}
+                  </span>
+                </Link>
+              </li>
+            ))
+          }
 
-      </ul>
+        </ul>
+      </div>
     </footer>
   );
 }

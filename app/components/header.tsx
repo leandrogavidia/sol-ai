@@ -1,12 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Button } from "./button";
+import { Badge } from "@/components/ui/badge";
 
 export function Header() {
   return (
-    <header className="w-full mb-10 p-5 pb-0 md:p-10 md:pb-0">
-      <div className="flex justify-between gap-x-4 items-center">
-        <div className="flex flex-col justify-center items-start gap-y-2">
+    <header className="w-full">
+      <nav className="relative z-50 flex items-center justify-between p-6 max-w-7xl mx-auto">
           <Link href="/">
             <Image
               src="/logo.png"
@@ -14,15 +13,15 @@ export function Header() {
               height={210}
               title="Logo"
               alt="Logo"
-              className="cursor-pointer max-w-20 h-auto w-full"
+              className="cursor-pointer max-w-16 h-auto w-full"
               priority
             />
           </Link>
-        </div>
-
-        <Button type="button" className=" bg-zinc-900 border-none cursor-default select-none" title="Soon">Soon public beta</Button>
-
-      </div>
+        
+        <Badge variant="outline" className="border-[var(--solana-purple)]/30 text-[var(--solana-purple)] h-8">
+          Soon public beta
+        </Badge>
+      </nav>
     </header>
   );
 }
