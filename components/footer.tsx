@@ -38,7 +38,7 @@ export function Footer() {
             className="max-w-10 h-auto w-full"
             priority
           />
-          <span className="font-normal text-sm">© 2025 Sol AI</span>
+          <span className="font-normal text-sm">© 2025 Sol AI</span>
         </div>
         <ul className="flex justify-center items-center gap-x-5">
           {

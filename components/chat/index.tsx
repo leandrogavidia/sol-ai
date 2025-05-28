@@ -7,10 +7,8 @@ import remarkGfm from "remark-gfm";
 import { useMemo, useState } from "react";
 import { BlinkMessage } from "../blink-message";
 import { useChat } from "ai/react";
-import { cn, randomString } from "@/app/lib/utils";
+import { cn, randomString } from "@/lib/utils";
 import { useActionSolanaWalletAdapter } from "@dialectlabs/blinks/hooks/solana";
-import { ChatOptions } from "../icons/chat-options";
-import { Trash } from "../icons/trash";
 import { BlinkMessageList } from "../blink-message-list";
 import { MkLink } from "../markdown/mk-link";
 
@@ -66,10 +64,7 @@ export function Chat() {
         </div>
 
         <div className="relative">
-          <ChatOptions
-            className="cursor-pointer"
-            onClick={() => setOptionsOpen(!optionsOpen)}
-          />
+
           <ul
             className={cn(
               "absolute top-4 right-0 bg-zinc-950 border border-zinc-900 min-h-max min-w-max px-4 py-2 rounded-lg cursor-pointer",
@@ -84,8 +79,6 @@ export function Chat() {
               }}
               className="flex justify-start items-center gap-x-2"
             >
-              <Trash className="fill-red-600" />
-              <span className="text-red-600">Clear chat</span>
             </li>
           </ul>
         </div>
@@ -133,31 +126,31 @@ export function Chat() {
                   </div>
 
                   {isAssistant &&
-                  m.toolInvocations &&
-                  m.toolInvocations[0].toolName === "radarHackathonProjects" ? (
+                    m.toolInvocations &&
+                    m.toolInvocations[0].toolName === "radarHackathonProjects" ? (
                     <div className="w-[90%] min-h-10 bg-yellow-500 rounded-md px-4 py-2">
                       <p className="text-md text-black"><span className="font-semibold">Radar Hackathon</span> - The projects presented may not be developed further.</p>
                     </div>
                   ) : null}
 
                   {isAssistant &&
-                  m.toolInvocations &&
-                  m.toolInvocations[0].toolName === "renaissanceHackathonProjects" ? (
+                    m.toolInvocations &&
+                    m.toolInvocations[0].toolName === "renaissanceHackathonProjects" ? (
                     <div className="w-[90%] min-h-10 bg-purple-500 rounded-md px-4 py-2">
                       <p className="text-md text-black"><span className="font-semibold">Renaissance Hackathon</span> - The projects presented may not be developed further.</p>
                     </div>
                   ) : null}
 
                   {isAssistant &&
-                  m.toolInvocations &&
-                  m.toolInvocations[0].toolName === "getBlink" ? (
+                    m.toolInvocations &&
+                    m.toolInvocations[0].toolName === "getBlink" ? (
                     <BlinkMessage message={m} adapter={adapter} />
                   ) : null}
 
                   {isAssistant &&
-                  m.toolInvocations &&
-                  m.toolInvocations[0].toolName === "recommendBlinks" &&
-                  'result' in m.toolInvocations[0]  ? (
+                    m.toolInvocations &&
+                    m.toolInvocations[0].toolName === "recommendBlinks" &&
+                    'result' in m.toolInvocations[0] ? (
                     <BlinkMessageList message={m} adapter={adapter} />
                   ) : null}
                 </div>
@@ -166,7 +159,7 @@ export function Chat() {
           </>
         ) : (
           <div className="flex flex-col justify-center items-center gap-y-3 w-full max-w-[66%] mx-auto">
-            {suggestedQuestions.map((question) => ( 
+            {suggestedQuestions.map((question) => (
               <button
                 type="button"
                 key={question}

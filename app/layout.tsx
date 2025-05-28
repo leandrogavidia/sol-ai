@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { Footer } from "./components/footer";
+import { Footer } from "@/components/footer";
 import "./globals.css";
 import "./blink.css";
-import { Header } from "./components/header";
-import Providers from "./components/providers";
+import { Header } from "@/components/header";
+import { Providers } from "@/components/providers";
 import localFont from "next/font/local";
 
 const diatype = localFont({
@@ -67,7 +67,7 @@ export const metadata: Metadata = {
   description: "AI-powered solana virtual assistant.",
   generator: "Next.js",
   manifest: "/manifest.json",
-  keywords: ["solana", "sol ai", "blinks", "ai"],
+  keywords: ["solana", "sol ai", "blinks", "ai", "hackathons"],
   icons: [
     { rel: "apple-touch-icon", url: "/sol-ai-logo.png" },
     { rel: "icon", url: "/sol-ai-logo.png" },
@@ -79,7 +79,7 @@ export const metadata: Metadata = {
     title: "Sol AI",
     description: "AI-powered solana virtual assistant.",
     images: {
-      url: "/thumbnail.png",
+      url: "/images/brand/thumbnail.png",
       alt: "Sol AI",
       username: "@_sol_ai",
       width: 1920,
@@ -95,7 +95,7 @@ export const metadata: Metadata = {
     locale: "en",
     siteName: "Sol AI",
     images: {
-      url: "/thumbnail.png",
+      url: "/images/brand/thumbnail.png",
       alt: "Sol AI",
       width: 1920,
       height: 1080,
@@ -123,9 +123,9 @@ export default function RootLayout({
         className={`${diatype.variable} antialiased`}
       >
         <Providers>
-        <Header />
-        <main className="w-full h-full">{children}</main>
-        <Footer />
+          <Header />
+          <main className="w-full h-full">{children}</main>
+          <Footer />
         </Providers>
       </body>
     </html>

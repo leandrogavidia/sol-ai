@@ -15,17 +15,17 @@ if (!process.env.NEXT_PUBLIC_RPC) {
   throw new Error("Missing NEXT_PUBLIC_RPC env variables. Check .env.examples file")
 }
 
-export default function Providers(props: React.PropsWithChildren) {
+export function Providers(props: React.PropsWithChildren) {
   const endpoint = process.env.NEXT_PUBLIC_RPC || "";
   const onError = useCallback((error: WalletError) => {
     console.error(error);
   }, []);
 
   return (
-      <ConnectionProvider endpoint={endpoint}>
-        <WalletProvider wallets={[]} onError={onError} autoConnect>
-          <WalletModalProvider>{props.children}</WalletModalProvider>
-        </WalletProvider>
-      </ConnectionProvider>
+    <ConnectionProvider endpoint={endpoint}>
+      <WalletProvider wallets={[]} onError={onError} autoConnect>
+        <WalletModalProvider>{props.children}</WalletModalProvider>
+      </WalletProvider>
+    </ConnectionProvider>
   );
 }

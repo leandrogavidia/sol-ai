@@ -15,8 +15,8 @@ import {
   FlaskConical,
 } from "lucide-react"
 import { useState } from "react"
-import { HeroLightLines, SectionLightLines } from "./components/light-lines"
-import { Discord } from "./components/icons/discord"
+import { HeroLightLines, SectionLightLines } from "../components/light-lines"
+import { Discord } from "@/components/icons/discord"
 import { config } from "@/lib/config"
 import Link from "next/link"
 
@@ -262,7 +262,7 @@ export default function HomePage() {
             </Card>
           </div>
         </section>
-        
+
       </div>
     </div>
   )
