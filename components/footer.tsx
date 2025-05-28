@@ -30,7 +30,7 @@ export function Footer() {
       <div className="flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="flex justify-start items-center gap-x-2">
           <Image
-            src="/logo.png"
+            src="/images/brand/logo.png"
             width={854}
             height={210}
             title="Logo"

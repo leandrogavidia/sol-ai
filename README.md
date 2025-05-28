@@ -1,6 +1,6 @@
 <div align="center">
   
-  ![Watch the demo](./public/sol-ai-logo.png)
+  ![Watch the demo](./public/images/brand/sol-ai-logo.png)
   <h1>Sol AI - Soon public web app</h1>
   
   <h3>AI-powered solana virtual assistant. Accelerating new users onboarding to Solana.</h3>

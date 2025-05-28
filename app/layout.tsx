@@ -69,8 +69,8 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
   keywords: ["solana", "sol ai", "blinks", "ai", "hackathons"],
   icons: [
-    { rel: "apple-touch-icon", url: "/sol-ai-logo.png" },
-    { rel: "icon", url: "/sol-ai-logo.png" },
+    { rel: "apple-touch-icon", url: "/images/brand/sol-ai-logo.png" },
+    { rel: "icon", url: "/images/brand/sol-ai-logo.png" },
   ],
   twitter: {
     card: "summary_large_image",
