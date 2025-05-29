@@ -26,7 +26,7 @@ export function Footer() {
     },
   ]
   return (
-    <footer className="px-6 py-12 max-w-7xl mx-auto border-t border-gray-800 relative">
+    <footer className="px-6 py-12 max-w-7xl mx-auto border-t border-gray-800 relative mt-10">
       <div className="flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="flex justify-start items-center gap-x-2">
           <Image
@@ -52,7 +52,6 @@ export function Footer() {
               </li>
             ))
           }
-
         </ul>
       </div>
     </footer>

@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 
 export function Header() {
   return (
-    <header className="w-full">
+    <header className="w-full mb-10">
       <nav className="relative z-50 flex items-center justify-between p-6 max-w-7xl mx-auto">
         <Link href="/">
           <Image
