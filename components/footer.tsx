@@ -1,3 +1,5 @@
+"use client"
+
 import Link from "next/link";
 import { Discord } from "./icons/discord";
 import { X } from "./icons/x";
@@ -5,8 +7,9 @@ import { Instagram } from "./icons/instagram";
 import Image from "next/image";
 import { GitHub } from "./icons/github";
 import { config } from "@/lib/config";
+import { usePathname } from "next/navigation";
 
-export function Footer() {
+function BaseFooter() {
   const socialMedia = [
     {
       link: config.socialMedia.x,
@@ -56,4 +59,14 @@ export function Footer() {
       </div>
     </footer>
   );
+}
+
+export function Footer() {
+  const pathname = usePathname();
+
+  if (pathname === "/chat") {
+    return null;
+  }
+
+  return <BaseFooter />;
 }

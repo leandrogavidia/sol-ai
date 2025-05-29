@@ -66,7 +66,6 @@ export const metadata: Metadata = {
   title: "Sol AI",
   description: "AI-powered solana virtual assistant.",
   generator: "Next.js",
-  manifest: "/manifest.json",
   keywords: ["solana", "sol ai", "blinks", "ai", "hackathons"],
   icons: [
     { rel: "apple-touch-icon", url: "/images/brand/sol-ai-logo.png" },
@@ -131,3 +130,4 @@ export default function RootLayout({
     </html>
   );
 }
+

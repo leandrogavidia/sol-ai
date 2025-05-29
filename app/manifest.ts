@@ -10,12 +10,17 @@ export default function manifest(): MetadataRoute.Manifest {
         display: "standalone",
         orientation: "portrait",
         scope: "/",
-        start_url: "/",
+        start_url: "/chat",
         icons: [
             {
-                "src": "/images/brand/sol-ai-logo.png",
-                "sizes": "280x280",
-                "type": "image/png",
+                src: '/images/brand/sol-ai-logo.png',
+                sizes: '192x192',
+                type: 'image/png'
+            },
+            {
+                src: '/images/brand/sol-ai-logo.png',
+                sizes: '512x512',
+                type: 'image/png'
             }
         ],
     }
