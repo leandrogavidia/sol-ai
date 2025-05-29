@@ -6,8 +6,7 @@
     "dev": "pnpm next dev",
     "build": "pnpm next build",
     "start": "pnpm next start",
-    "lint": "pnpm next lint",
-    "postinstall": "prisma generate"
+    "lint": "pnpm next lint"
   },
   "dependencies": {
     "@ai-sdk/google": "1.2.18",
