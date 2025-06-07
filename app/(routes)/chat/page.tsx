@@ -65,9 +65,14 @@ const scrollingStyle = `
 `
 
 export default function ChatPage() {
-    const { messages, input, handleInputChange, handleSubmit, status, append } = useChat({
+    const messagesEndRef = useRef<HTMLDivElement>(null)
 
-        api: "api/sol-ai"
+    const { messages, input, handleInputChange, handleSubmit, status, append } = useChat({
+        api: "api/sol-ai",
+        onFinish() {
+            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+
+        },
     });
     const { connected, publicKey } = useWallet()
 
@@ -75,7 +80,6 @@ export default function ChatPage() {
     const [hackathonSubMode, setHackathonSubMode] = useState<HackathonSubMode>(null)
     const [collosseumEvent, setCollosseumEvent] = useState<CollosseumEvent>(null)
     const [superTeamEvent, setSuperTeamEvent] = useState<SuperTeamEvent>(null)
-    const messagesEndRef = useRef<HTMLDivElement>(null)
     const [isRecording, setIsRecording] = useState(false)
     const [showSidebar, setShowSidebar] = useState(false)
     const [showChatHistory, setShowChatHistory] = useState(false)
@@ -122,14 +126,6 @@ export default function ChatPage() {
         "What are the most popular Solana wallets?",
         "How does Solana handle smart contracts?",
     ]
-
-    const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-    }
-
-    useEffect(() => {
-        scrollToBottom()
-    }, [messages])
 
     // const getModeDescription = () => {
     //     if (assistantMode === "Blinks") {
@@ -467,7 +463,7 @@ export default function ChatPage() {
                                     className="bg-gray-900/80 border-gray-700/50 backdrop-blur-sm py-0"
                                 >
                                     <CardContent className="p-4">
-                                        <p className="text-gray-100 leading-relaxed">Hello, let me help you</p>
+                                        <p className="text-gray-100 leading-relaxed">Hi there! I&apos;m Sol AI, your virtual assistant ready to help you explore Solana. How can I assist you today?</p>
                                     </CardContent>
                                 </Card>
                             </div>
