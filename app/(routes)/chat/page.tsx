@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-
+import { useChat } from '@ai-sdk/react';
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -15,9 +15,14 @@ import {
     DropdownMenuSubTrigger,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Bot, Send, User, ChevronDown, Zap, Trophy, Globe } from "lucide-react"
+import { Send, User, ChevronDown, Zap, Trophy, Globe } from "lucide-react"
 import { Mic, MicOff, Paperclip, Search, Settings, History, X, FileText, ImageIcon, Menu, Pencil } from "lucide-react"
 import { useState, useRef, useEffect } from "react"
+import { useWallet } from "@solana/wallet-adapter-react"
+import { EarlyAccess } from "@/components/views/early-access"
+import { SolanaWalletButton } from "@/components/wallet"
+import Markdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import Image from "next/image"
 
 interface Message {
@@ -34,12 +39,6 @@ interface ChatHistory {
     timestamp: Date
     messages: Message[]
 }
-
-// interface UserProfile {
-//     name: string
-//     email: string
-//     avatar: string
-// }
 
 type AssistantMode = "Ecosystem" | "Blinks" | "Hackathons"
 type HackathonSubMode = "Colosseum" | "Super Team" | null
@@ -66,17 +65,12 @@ const scrollingStyle = `
 `
 
 export default function ChatPage() {
-    const [messages, setMessages] = useState<Message[]>([
-        {
-            id: "1",
-            content:
-                "Hello! I'm Sol AI, your Solana ecosystem assistant. I'm here to help you learn about Solana projects, communities, development, and much more. How can I assist you today?",
-            sender: "ai",
-            timestamp: new Date(),
-        },
-    ])
-    const [inputValue, setInputValue] = useState("")
-    const [isTyping, setIsTyping] = useState(false)
+    const { messages, input, handleInputChange, handleSubmit, status, append } = useChat({
+
+        api: "api/sol-ai"
+    });
+    const { connected, publicKey } = useWallet()
+
     const [assistantMode, setAssistantMode] = useState<AssistantMode>("Ecosystem")
     const [hackathonSubMode, setHackathonSubMode] = useState<HackathonSubMode>(null)
     const [collosseumEvent, setCollosseumEvent] = useState<CollosseumEvent>(null)
@@ -85,7 +79,7 @@ export default function ChatPage() {
     const [isRecording, setIsRecording] = useState(false)
     const [showSidebar, setShowSidebar] = useState(false)
     const [showChatHistory, setShowChatHistory] = useState(false)
-    const [chatHistories, setChatHistories] = useState<ChatHistory[]>([
+    const [chatHistories] = useState<ChatHistory[]>([
         {
             id: "1",
             title: "Getting Started with Solana",
@@ -109,7 +103,7 @@ export default function ChatPage() {
         },
     ])
     const [searchQuery, setSearchQuery] = useState("")
-    const [currentChatId, setCurrentChatId] = useState<string | null>(null)
+    const [currentChatId] = useState<string | null>(null)
     const userProfile = {
         name: "Anonymous User",
         email: "user@example.com",
@@ -137,109 +131,27 @@ export default function ChatPage() {
         scrollToBottom()
     }, [messages])
 
-    const getModeDescription = () => {
-        if (assistantMode === "Blinks") {
-            return "Specialized in Solana Blinks and blockchain interactions"
-        } else if (assistantMode === "Hackathons") {
-            if (hackathonSubMode === "Colosseum") {
-                if (collosseumEvent === "Renaissance") {
-                    return "Focused on Colosseum Renaissance hackathon"
-                } else if (collosseumEvent === "Radar") {
-                    return "Focused on Colosseum Radar hackathon"
-                }
-                return "Focused on Colosseum hackathons"
-            } else if (hackathonSubMode === "Super Team") {
-                if (superTeamEvent === "Solana Copa America") {
-                    return "Focused on Solana Copa America by Super Team"
-                }
-                return "Focused on Super Team hackathons"
-            }
-            return "Specialized in Solana hackathons and competitions"
-        }
-        return "General Solana ecosystem expert"
-    }
-
-    const generateAIResponse = (userMessage: string): string => {
-        const lowerMessage = userMessage.toLowerCase()
-
-        if (assistantMode === "Blinks") {
-            if (lowerMessage.includes("blink")) {
-                return "Solana Blinks (Blockchain Links) are shareable, actionable links that allow users to interact with Solana applications directly from any web environment. They enable seamless onboarding and interaction without requiring users to navigate to specific dApps. Blinks can trigger transactions, display NFTs, or execute smart contract functions directly from social media, messaging apps, or websites."
-            }
-            return "As your Blinks specialist, I can help you understand how Solana Blinks work, how to create them, integrate them into applications, and use them for seamless blockchain interactions. What specific aspect of Blinks would you like to explore?"
-        }
-
-        if (assistantMode === "Hackathons") {
-            if (hackathonSubMode === "Colosseum") {
-                if (collosseumEvent === "Renaissance") {
-                    return "Colosseum Renaissance is a major Solana hackathon focusing on innovative DeFi, gaming, and infrastructure projects. It offers substantial prizes and mentorship opportunities for developers building on Solana. The hackathon emphasizes creativity, technical excellence, and real-world utility."
-                } else if (collosseumEvent === "Radar") {
-                    return "Colosseum Radar is a hackathon that focuses on early-stage projects and emerging technologies in the Solana ecosystem. It's designed to identify and support promising new ideas and developers who are pushing the boundaries of what's possible on Solana."
-                }
-                return "Colosseum runs some of the most prestigious Solana hackathons, including Renaissance and Radar. These events attract top developers worldwide and offer significant prizes, mentorship, and networking opportunities. Would you like to know more about a specific Colosseum event?"
-            } else if (hackathonSubMode === "Super Team") {
-                if (superTeamEvent === "Solana Copa America") {
-                    return "Solana Copa America by Super Team is a regional hackathon focused on Latin American developers and projects. It aims to grow the Solana ecosystem in Latin America by providing resources, mentorship, and funding opportunities for local developers building innovative solutions."
-                }
-                return "Super Team organizes regional hackathons and events to grow the Solana ecosystem globally. Their events focus on community building, education, and supporting local developers. The Solana Copa America is one of their flagship events for the Latin American region."
-            }
-            return "I can help you with information about Solana hackathons, including Colosseum events (Renaissance, Radar) and Super Team competitions (Solana Copa America). These hackathons are great opportunities to build, learn, and connect with the Solana community."
-        }
-
-        const responses = {
-            "what is solana":
-                "Solana is a high-performance blockchain platform designed for decentralized applications and crypto-currencies. It's known for its fast transaction speeds (up to 65,000 TPS) and low fees, achieved through its unique Proof of History consensus mechanism combined with Proof of Stake.",
-            projects:
-                "Some notable Solana projects include: Serum (DEX), Raydium (AMM), Phantom (wallet), Magic Eden (NFT marketplace), Marinade (liquid staking), and Jupiter (DEX aggregator). The ecosystem is constantly growing with new DeFi, NFT, and gaming projects.",
-            development:
-                "To start developing on Solana: 1) Learn Rust programming language, 2) Install Solana CLI tools, 3) Study the Anchor framework, 4) Practice with Solana Playground, 5) Join the Solana developer community and explore documentation at docs.solana.com.",
-            different:
-                "Solana stands out through: Proof of History for faster consensus, parallel transaction processing, low fees (typically $0.00025), high throughput, and a growing ecosystem. Unlike Ethereum, it doesn't rely on layer 2 solutions for scaling.",
-        }
-
-        for (const [key, response] of Object.entries(responses)) {
-            if (lowerMessage.includes(key)) {
-                return response
-            }
-        }
-
-        return `That's a great question! As Sol AI in ${assistantMode} mode, I'm specialized in helping with Solana ecosystem topics. I can provide information about Solana projects, development, DeFi protocols, NFTs, and much more. Could you be more specific about what aspect of Solana you'd like to learn about?`
-    }
-
-    const handleSendMessage = async (content: string) => {
-        if (!content.trim()) return
-
-        const userMessage: Message = {
-            id: Date.now().toString(),
-            content: content.trim(),
-            sender: "user",
-            timestamp: new Date(),
-        }
-
-        setMessages((prev) => [...prev, userMessage])
-        setInputValue("")
-        setIsTyping(true)
-
-        setTimeout(() => {
-            const aiResponse: Message = {
-                id: (Date.now() + 1).toString(),
-                content: generateAIResponse(content),
-                sender: "ai",
-                timestamp: new Date(),
-            }
-            setMessages((prev) => [...prev, aiResponse])
-            setIsTyping(false)
-        }, 1500)
-    }
-
-    const handleQuestionClick = (question: string) => {
-        handleSendMessage(question)
-    }
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault()
-        handleSendMessage(inputValue)
-    }
+    // const getModeDescription = () => {
+    //     if (assistantMode === "Blinks") {
+    //         return "Specialized in Solana Blinks and blockchain interactions"
+    //     } else if (assistantMode === "Hackathons") {
+    //         if (hackathonSubMode === "Colosseum") {
+    //             if (collosseumEvent === "Renaissance") {
+    //                 return "Focused on Colosseum Renaissance hackathon"
+    //             } else if (collosseumEvent === "Radar") {
+    //                 return "Focused on Colosseum Radar hackathon"
+    //             }
+    //             return "Focused on Colosseum hackathons"
+    //         } else if (hackathonSubMode === "Super Team") {
+    //             if (superTeamEvent === "Solana Copa America") {
+    //                 return "Focused on Solana Copa America by Super Team"
+    //             }
+    //             return "Focused on Super Team hackathons"
+    //         }
+    //         return "Specialized in Solana hackathons and competitions"
+    //     }
+    //     return "General Solana ecosystem expert"
+    // }
 
     const handleModeChange = (
         mode: AssistantMode,
@@ -256,15 +168,6 @@ export default function ChatPage() {
         } else if (mode === "Hackathons" && subMode === "Super Team" && event) {
             setSuperTeamEvent(event as SuperTeamEvent)
         }
-
-        const newInitialMessage = {
-            id: "1",
-            content: `Hello! I'm Sol AI in ${mode} mode. ${getModeDescription()}. How can I assist you today?`,
-            sender: "ai" as const,
-            timestamp: new Date(),
-        }
-
-        setMessages([newInitialMessage])
     }
 
     const getModeIcon = () => {
@@ -325,48 +228,6 @@ export default function ChatPage() {
         }
     }
 
-    const handleNewChat = () => {
-        if (messages.length > 1 && currentChatId === null) {
-            const newChatHistory: ChatHistory = {
-                id: Date.now().toString(),
-                title: messages[1]?.content.slice(0, 50) + "..." || "New Chat",
-                lastMessage: messages[messages.length - 1]?.content || "",
-                timestamp: new Date(),
-                messages: [...messages],
-            }
-            setChatHistories((prev) => [newChatHistory, ...prev])
-        }
-
-        setCurrentChatId(null)
-        setMessages([
-            {
-                id: "1",
-                content: `Hello! I'm Sol AI in ${assistantMode} mode. ${getModeDescription()}. How can I assist you today?`,
-                sender: "ai",
-                timestamp: new Date(),
-            },
-        ])
-        setShowSidebar(false)
-    }
-
-    const handleLoadChat = (chatHistory: ChatHistory) => {
-        setCurrentChatId(chatHistory.id)
-        setMessages(
-            chatHistory.messages.length > 0
-                ? chatHistory.messages
-                : [
-                    {
-                        id: "1",
-                        content: `Hello! I'm Sol AI in ${assistantMode} mode. ${getModeDescription()}. How can I assist you today?`,
-                        sender: "ai",
-                        timestamp: new Date(),
-                    },
-                ],
-        )
-        setShowChatHistory(false)
-        setShowSidebar(false)
-    }
-
     const getFileIcon = (fileName: string) => {
         const extension = fileName.split(".").pop()?.toLowerCase()
         if (["jpg", "jpeg", "png", "gif", "webp"].includes(extension || "")) {
@@ -377,8 +238,14 @@ export default function ChatPage() {
         return <Paperclip className="w-4 h-4" />
     }
 
+    if (!connected || !publicKey) {
+        return (
+            <EarlyAccess />
+        )
+    }
+
     return (
-        <div className="min-h-screen bg-black text-white relative">
+        <section className="min-h-screen bg-black text-white relative">
             <div className="relative z-10 flex flex-col h-screen">
                 <header className="border-b border-gray-800 bg-black/80 backdrop-blur-sm">
                     <div className="max-w-4xl mx-auto px-6 py-4 flex flex-col items-center justify-between gap-4 md:flex-row">
@@ -393,9 +260,10 @@ export default function ChatPage() {
                                     <Menu className="w-4 h-4" />
                                 </Button>
 
-                                <Button variant="outline" size="sm" onClick={handleNewChat} className="cursor-pointer border-gray-600 text-gray-400 hover:bg-gray-800 hover:text-white">
+                                <Button variant="outline" size="sm" className="cursor-pointer border-gray-600 text-gray-400 hover:bg-gray-800 hover:text-white">
                                     <Pencil className="w-4 h-4" />
                                 </Button>
+                                <SolanaWalletButton />
                             </div>
                             <h1 className="text-lg font-medium text-white">Sol AI</h1>
                         </div>
@@ -500,7 +368,6 @@ export default function ChatPage() {
                             <div className="p-4 space-y-2">
                                 <Button
                                     variant="ghost"
-                                    onClick={handleNewChat}
                                     className="cursor-pointer w-full justify-start text-gray-300 hover:text-white hover:bg-gray-800"
                                 >
                                     <Pencil className="w-4 h-4" />
@@ -555,7 +422,6 @@ export default function ChatPage() {
                                 {filteredChatHistories.map((chat) => (
                                     <div
                                         key={chat.id}
-                                        onClick={() => handleLoadChat(chat)}
                                         className={`p-4 border-b border-gray-700/50 hover:bg-gray-800/50 cursor-pointer transition-colors ${currentChatId === chat.id ? "bg-gray-800/70" : ""
                                             }`}
                                     >
@@ -579,16 +445,43 @@ export default function ChatPage() {
 
                 <div className="flex-1 overflow-y-auto px-6 py-6">
                     <div className="max-w-4xl mx-auto space-y-6">
-                        {messages.map((message) => (
-                            <div key={message.id} className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}>
+                        <div key={"a"} className="flex justify-start">
+                            <div
+                                className="flex items-start space-x-3 max-w-3xl relative -z-10 "
+                            >
                                 <div
-                                    className={`flex items-start space-x-3 max-w-3xl ${message.sender === "user" ? "flex-row-reverse space-x-reverse" : ""}`}
+                                    className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-black"
+                                >
+
+                                    <Image
+                                        src="/images/brand/logo.png"
+                                        width={854}
+                                        height={210}
+                                        title="Logo"
+                                        alt="Logo"
+                                        className="max-w-6 h-auto w-full"
+                                        priority
+                                    />
+                                </div>
+                                <Card
+                                    className="bg-gray-900/80 border-gray-700/50 backdrop-blur-sm py-0"
+                                >
+                                    <CardContent className="p-4">
+                                        <p className="text-gray-100 leading-relaxed">Hello, let me help you</p>
+                                    </CardContent>
+                                </Card>
+                            </div>
+                        </div>
+                        {messages.map((message) => (
+                            <div key={message.id} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
+                                <div
+                                    className={`flex items-start space-x-3 max-w-3xl relative -z-10 ${message.role === "user" ? "flex-row-reverse space-x-reverse" : ""}`}
                                 >
                                     <div
-                                        className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${message.sender === "user" ? "bg-gray-700" : "bg-black"
+                                        className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${message.role === "user" ? "bg-gray-700" : "bg-black"
                                             }`}
                                     >
-                                        {message.sender === "user" ? (
+                                        {message.role === "user" ? (
                                             <User className="w-4 h-4 text-white" />
                                         ) : (
                                             <Image
@@ -603,52 +496,47 @@ export default function ChatPage() {
                                         )}
                                     </div>
                                     <Card
-                                        className={`${message.sender === "user"
+                                        className={`${message.role === "user"
                                             ? "bg-[var(--solana-purple)]/20 border-[var(--solana-purple)]/30"
                                             : "bg-gray-900/80 border-gray-700/50"
                                             } backdrop-blur-sm py-0`}
                                     >
-                                        <CardContent className="p-4">
-                                            <p className="text-gray-100 leading-relaxed">{message.content}</p>
+                                        <CardContent className="p-4 flex flex-col justify-start items-start gap-5">
+                                            <Markdown
+                                                remarkPlugins={[remarkGfm]}
+                                                components={{
+                                                    p(props) {
+                                                        const { ...rest } = props
+                                                        return <p className="block" {...rest}></p>
+
+                                                    },
+                                                    a(props) {
+                                                        const { ...rest } = props
+                                                        return <a target="_blank" className="text-primary underline" {...rest}></a>
+                                                    },
+                                                    ul(props) {
+                                                        const { ...rest } = props
+                                                        return <ul className="flex flex-col justify-center items-start gap-4" {...rest} />
+                                                    },
+                                                    ol(props) {
+                                                        const { ...rest } = props
+                                                        return <ol className="flex flex-col justify-center items-start gap-4" {...rest} />
+                                                    },
+                                                }}
+                                            >
+                                                {message.content}
+                                            </Markdown>
                                         </CardContent>
                                     </Card>
                                 </div>
                             </div>
                         ))}
 
-                        {isTyping && (
-                            <div className="flex justify-start">
-                                <div className="flex items-start space-x-3 max-w-3xl">
-                                    <div className="w-8 h-8 rounded-full bg-gradient-to-r from-[var(--solana-purple)] to-[var(--solana-green)] flex items-center justify-center flex-shrink-0">
-                                        <Bot className="w-4 h-4 text-white" />
-                                    </div>
-                                    <Card className="bg-gray-900/80 border-gray-700/50 backdrop-blur-sm">
-                                        <CardContent className="p-4">
-                                            <div className="flex space-x-1">
-                                                <div
-                                                    className="w-2 h-2 bg-[var(--solana-purple)] rounded-full animate-bounce"
-                                                    style={{ animationDelay: "0ms" }}
-                                                ></div>
-                                                <div
-                                                    className="w-2 h-2 bg-[var(--solana-green)] rounded-full animate-bounce"
-                                                    style={{ animationDelay: "150ms" }}
-                                                ></div>
-                                                <div
-                                                    className="w-2 h-2 bg-[var(--solana-purple)] rounded-full animate-bounce"
-                                                    style={{ animationDelay: "300ms" }}
-                                                ></div>
-                                            </div>
-                                        </CardContent>
-                                    </Card>
-                                </div>
-                            </div>
-                        )}
-
                         <div ref={messagesEndRef} />
                     </div>
                 </div>
 
-                {messages.length === 1 && (
+                {messages.length === 0 && (
                     <div className="px-6 py-4 border-t border-gray-800">
                         <div className="max-w-4xl mx-auto">
                             <p className="text-sm text-gray-400 mb-3">Quick questions to get started!</p>
@@ -659,7 +547,12 @@ export default function ChatPage() {
                                             key={`first-${index}`}
                                             variant="outline"
                                             size="sm"
-                                            onClick={() => handleQuestionClick(question)}
+                                            onClick={() => {
+                                                append({
+                                                    role: "user",
+                                                    content: question
+                                                })
+                                            }}
                                             className="cursor-pointer border-[var(--solana-purple)]/30 text-white hover:bg-[var(--solana-purple)]/10 text-xs whitespace-nowrap flex-shrink-0 min-w-max"
                                         >
                                             {question}
@@ -671,7 +564,6 @@ export default function ChatPage() {
                                             key={`second-${index}`}
                                             variant="outline"
                                             size="sm"
-                                            onClick={() => handleQuestionClick(question)}
                                             className="cursor-pointer border-[var(--solana-purple)]/30 text-[var(--solana-purple)] hover:bg-[var(--solana-purple)]/10 text-xs whitespace-nowrap flex-shrink-0 min-w-max"
                                         >
                                             {question}
@@ -715,11 +607,12 @@ export default function ChatPage() {
                             </Button>
 
                             <Input
-                                value={inputValue}
-                                onChange={(e) => setInputValue(e.target.value)}
+                                name="prompt"
+                                value={input}
+                                onChange={handleInputChange}
                                 placeholder="Ask me anything about Solana..."
                                 className="flex-1 bg-gray-900/80 border-gray-700/50 text-white placeholder-gray-400 focus:border-[var(--solana-purple)]/50"
-                                disabled={isTyping}
+                                disabled={status === "streaming"}
                             />
 
                             <Button
@@ -735,7 +628,6 @@ export default function ChatPage() {
 
                             <Button
                                 type="submit"
-                                disabled={!inputValue.trim() || isTyping}
                                 className="cursor-pointer bg-gradient-to-r from-[var(--solana-purple)] to-[var(--solana-green)] hover:from-[var(--solana-purple)]/90 hover:to-[var(--solana-green)]/90 text-white"
                             >
                                 <Send className="w-4 h-4" />
@@ -746,9 +638,11 @@ export default function ChatPage() {
                             Sol AI can make mistakes. Please verify important information.
                             {isRecording && <span className="text-red-400 ml-2">🔴 Recording...</span>}
                         </p>
+                        <span className="w-full text-xs text-gray-200 text-center inline-block mx-auto mt-4">From 🌎 LATAM to Solana 💜</span>
+
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
     )
 }

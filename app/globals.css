@@ -94,17 +94,7 @@ body {
 }
 
 .wallet-adapter-button-trigger {
-  background: transparent !important;
-  border: 1px solid white !important;
-  border-radius: 9999px;
-  height: 40px;
-  padding-left: 16px !important;
-  padding-right: 16px !important;
-}
-
-.wallet-adapter-dropdown-list,
-.wallet-adapter-button {
-  font-family: inherit !important;
+  @apply border border-gray-600 rounded-full bg-transparent px-4 h-9;
 }
 
 @layer base {
