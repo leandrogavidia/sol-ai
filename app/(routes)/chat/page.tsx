@@ -67,7 +67,7 @@ const scrollingStyle = `
 export default function ChatPage() {
     const messagesEndRef = useRef<HTMLDivElement>(null)
 
-    const { messages, input, handleInputChange, handleSubmit, status, append } = useChat({
+    const { messages, input, handleInputChange, handleSubmit, status, append, setInput, setMessages } = useChat({
         api: "api/sol-ai",
         onFinish() {
             messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -126,6 +126,11 @@ export default function ChatPage() {
         "What are the most popular Solana wallets?",
         "How does Solana handle smart contracts?",
     ]
+
+    const cleanConversation = () => {
+        setMessages([])
+        setInput("")
+    }
 
     // const getModeDescription = () => {
     //     if (assistantMode === "Blinks") {
@@ -243,7 +248,7 @@ export default function ChatPage() {
     return (
         <section className="min-h-screen bg-black text-white relative">
             <div className="relative z-10 flex flex-col h-screen">
-                <header className="border-b border-gray-800 bg-black/80 backdrop-blur-sm">
+                <header className="border-b border-gray-800 bg-black/80 backdrop-blur-sm relative z-50">
                     <div className="max-w-4xl mx-auto px-6 py-4 flex flex-col items-center justify-between gap-4 md:flex-row">
                         <div className="w-full flex justify-between items-center gap-4">
                             <div className="flex items-center space-x-4">
@@ -256,7 +261,7 @@ export default function ChatPage() {
                                     <Menu className="w-4 h-4" />
                                 </Button>
 
-                                <Button variant="outline" size="sm" className="cursor-pointer border-gray-600 text-gray-400 hover:bg-gray-800 hover:text-white">
+                                <Button onClick={cleanConversation} variant="outline" size="sm" className="cursor-pointer border-gray-600 text-gray-400 hover:bg-gray-800 hover:text-white">
                                     <Pencil className="w-4 h-4" />
                                 </Button>
                                 <SolanaWalletButton />
@@ -443,7 +448,7 @@ export default function ChatPage() {
                     <div className="max-w-4xl mx-auto space-y-6">
                         <div key={"a"} className="flex justify-start">
                             <div
-                                className="flex items-start space-x-3 max-w-3xl relative -z-10 "
+                                className="flex items-start space-x-3 max-w-3xl relative"
                             >
                                 <div
                                     className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-black"
@@ -471,7 +476,7 @@ export default function ChatPage() {
                         {messages.map((message) => (
                             <div key={message.id} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
                                 <div
-                                    className={`flex items-start space-x-3 max-w-3xl relative -z-10 ${message.role === "user" ? "flex-row-reverse space-x-reverse" : ""}`}
+                                    className={`flex items-start space-x-3 max-w-3xl relative ${message.role === "user" ? "flex-row-reverse space-x-reverse" : ""}`}
                                 >
                                     <div
                                         className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${message.role === "user" ? "bg-gray-700" : "bg-black"
@@ -508,7 +513,7 @@ export default function ChatPage() {
                                                     },
                                                     a(props) {
                                                         const { ...rest } = props
-                                                        return <a target="_blank" className="text-primary underline" {...rest}></a>
+                                                        return <a target="_blank" rel="noopener noreferrer" className="font-semibold cursor-pointer text-solana-green underline" {...rest}></a>
                                                     },
                                                     ul(props) {
                                                         const { ...rest } = props
@@ -604,6 +609,7 @@ export default function ChatPage() {
 
                             <Input
                                 name="prompt"
+                                autoComplete="off"
                                 value={input}
                                 onChange={handleInputChange}
                                 placeholder="Ask me anything about Solana..."

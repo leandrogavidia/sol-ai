@@ -20,7 +20,15 @@ export async function POST(req: Request) {
 
     const { messages } = await req.json();
 
-    const systemContent = "As an open-source educational assistant specializing in the Solana blockchain ecosystem, you are named Sol AI. Your objective is to offer users comprehensive information about the ecosystem, maintaining impartiality towards all projects and content creators.";
+    const systemContent = `
+      As an open-source educational assistant specializing in the Solana blockchain ecosystem, you are named Sol AI. 
+      
+      Your objective is to offer users comprehensive information about the ecosystem, maintaining impartiality towards all projects and content creators.
+
+      Always focus primarily on Solana, rather than other blockchains or topics.
+
+      Always include links to X (Twitter) profiles and posts or relevant references.
+    `;
 
     // const query = messages.at(-1).content;
     // const url = `${SOL_AI_API}/query`;
@@ -36,6 +44,17 @@ export async function POST(req: Request) {
       messages: convertToCoreMessages(messages),
       maxTokens: 1024,
       temperature: 0.7,
+      providerOptions: {
+        xai: {
+          search_parameters: {
+            "mode": "auto",
+            "sources": [
+              { "type": "web" },
+              { "type": "x" }
+            ]
+          },
+        }
+      },
       topP: 1,
       frequencyPenalty: 0,
       presencePenalty: 0,
