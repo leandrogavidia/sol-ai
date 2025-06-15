@@ -24,6 +24,9 @@ import { SolanaWalletButton } from "@/components/wallet"
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import Image from "next/image"
+import { HackathonProject, HackathonProjectCard } from "@/components/hackathons/hackathon-project-card";
+import { cn } from "@/lib/utils";
+import { HackathonLoader } from "@/components/hackathons/hackathon-loader";
 
 interface Message {
     id: string
@@ -42,7 +45,7 @@ interface ChatHistory {
 
 type AssistantMode = "Ecosystem" | "Blinks" | "Hackathons"
 type HackathonSubMode = "Colosseum" | "Super Team" | null
-type CollosseumEvent = "Renaissance" | "Radar" | null
+type CollosseumEvent = "Renaissance" | "Radar" | "Breakout" | null
 type SuperTeamEvent = "Solana Copa America" | null
 
 const scrollingStyle = `
@@ -82,6 +85,8 @@ export default function ChatPage() {
     const [superTeamEvent, setSuperTeamEvent] = useState<SuperTeamEvent>(null)
     const [isRecording, setIsRecording] = useState(false)
     const [showSidebar, setShowSidebar] = useState(false)
+    const [hackathonData, setHackathonData] = useState<HackathonProject[]>([])
+    const [isHackathonsLoading, setIsHackathonsLoading] = useState(false)
     const [showChatHistory, setShowChatHistory] = useState(false)
     const [chatHistories] = useState<ChatHistory[]>([
         {
@@ -130,6 +135,7 @@ export default function ChatPage() {
     const cleanConversation = () => {
         setMessages([])
         setInput("")
+        setHackathonData([])
     }
 
     // const getModeDescription = () => {
@@ -305,22 +311,12 @@ export default function ChatPage() {
                                                     <DropdownMenuItem onClick={() => handleModeChange("Hackathons", "Colosseum", "Radar")}>
                                                         Radar
                                                     </DropdownMenuItem>
-                                                </DropdownMenuSubContent>
-                                            </DropdownMenuSub>
-                                            <DropdownMenuSub>
-                                                <DropdownMenuSubTrigger>Super Team</DropdownMenuSubTrigger>
-                                                <DropdownMenuSubContent className="bg-gray-900 border-gray-700">
-                                                    <DropdownMenuItem
-                                                        onClick={() => handleModeChange("Hackathons", "Super Team", "Solana Copa America")}
-                                                    >
-                                                        Solana Copa America
+                                                    <DropdownMenuItem onClick={() => handleModeChange("Hackathons", "Colosseum", "Breakout")}>
+                                                        Breakout
                                                     </DropdownMenuItem>
                                                 </DropdownMenuSubContent>
                                             </DropdownMenuSub>
                                             <DropdownMenuSeparator />
-                                            <DropdownMenuItem onClick={() => handleModeChange("Hackathons")}>
-                                                General Hackathons
-                                            </DropdownMenuItem>
                                         </DropdownMenuSubContent>
                                     </DropdownMenuSub>
                                 </DropdownMenuContent>
@@ -473,71 +469,90 @@ export default function ChatPage() {
                                 </Card>
                             </div>
                         </div>
-                        {messages.map((message) => (
-                            <div key={message.id} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
-                                <div
-                                    className={`flex items-start space-x-3 max-w-3xl relative ${message.role === "user" ? "flex-row-reverse space-x-reverse" : ""}`}
-                                >
-                                    <div
-                                        className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${message.role === "user" ? "bg-gray-700" : "bg-black"
-                                            }`}
-                                    >
-                                        {message.role === "user" ? (
-                                            <User className="w-4 h-4 text-white" />
-                                        ) : (
-                                            <Image
-                                                src="/images/brand/logo.png"
-                                                width={854}
-                                                height={210}
-                                                title="Logo"
-                                                alt="Logo"
-                                                className="max-w-6 h-auto w-full"
-                                                priority
-                                            />
-                                        )}
-                                    </div>
-                                    <Card
-                                        className={`${message.role === "user"
-                                            ? "bg-[var(--solana-purple)]/20 border-[var(--solana-purple)]/30"
-                                            : "bg-gray-900/80 border-gray-700/50"
-                                            } backdrop-blur-sm py-0`}
-                                    >
-                                        <CardContent className="p-4 flex flex-col justify-start items-start gap-5">
-                                            <Markdown
-                                                remarkPlugins={[remarkGfm]}
-                                                components={{
-                                                    p(props) {
-                                                        const { ...rest } = props
-                                                        return <p className="block" {...rest}></p>
 
-                                                    },
-                                                    a(props) {
-                                                        const { ...rest } = props
-                                                        return <a target="_blank" rel="noopener noreferrer" className="font-semibold cursor-pointer text-solana-green underline" {...rest}></a>
-                                                    },
-                                                    ul(props) {
-                                                        const { ...rest } = props
-                                                        return <ul className="flex flex-col justify-center items-start gap-4" {...rest} />
-                                                    },
-                                                    ol(props) {
-                                                        const { ...rest } = props
-                                                        return <ol className="flex flex-col justify-center items-start gap-4" {...rest} />
-                                                    },
-                                                }}
+                        {
+                            assistantMode === "Ecosystem" ? (
+                                messages.map((message) => (
+                                    <div key={message.id} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
+                                        <div
+                                            className={`flex items-start space-x-3 max-w-3xl relative ${message.role === "user" ? "flex-row-reverse space-x-reverse" : ""}`}
+                                        >
+                                            <div
+                                                className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${message.role === "user" ? "bg-gray-700" : "bg-black"
+                                                    }`}
                                             >
-                                                {message.content}
-                                            </Markdown>
-                                        </CardContent>
-                                    </Card>
-                                </div>
-                            </div>
-                        ))}
+                                                {message.role === "user" ? (
+                                                    <User className="w-4 h-4 text-white" />
+                                                ) : (
+                                                    <Image
+                                                        src="/images/brand/logo.png"
+                                                        width={854}
+                                                        height={210}
+                                                        title="Logo"
+                                                        alt="Logo"
+                                                        className="max-w-6 h-auto w-full"
+                                                        priority
+                                                    />
+                                                )}
+                                            </div>
+                                            <Card
+                                                className={`${message.role === "user"
+                                                    ? "bg-[var(--solana-purple)]/20 border-[var(--solana-purple)]/30"
+                                                    : "bg-gray-900/80 border-gray-700/50"
+                                                    } backdrop-blur-sm py-0`}
+                                            >
+                                                <CardContent className="p-4 flex flex-col justify-start items-start gap-5">
+                                                    <Markdown
+                                                        remarkPlugins={[remarkGfm]}
+                                                        components={{
+                                                            p(props) {
+                                                                const { ...rest } = props
+                                                                return <p className="block" {...rest}></p>
+
+                                                            },
+                                                            a(props) {
+                                                                const { ...rest } = props
+                                                                return <a target="_blank" rel="noopener noreferrer" className="font-semibold cursor-pointer text-solana-green underline" {...rest}></a>
+                                                            },
+                                                            ul(props) {
+                                                                const { ...rest } = props
+                                                                return <ul className="flex flex-col justify-center items-start gap-4" {...rest} />
+                                                            },
+                                                            ol(props) {
+                                                                const { ...rest } = props
+                                                                return <ol className="flex flex-col justify-center items-start gap-4" {...rest} />
+                                                            },
+                                                        }}
+                                                    >
+                                                        {message.content}
+                                                    </Markdown>
+                                                </CardContent>
+                                            </Card>
+                                        </div>
+                                    </div>
+                                ))
+                            ) : ""
+                        }
+
+                        {
+                            assistantMode === "Hackathons" ? (
+                                isHackathonsLoading ? (
+                                    <HackathonLoader />
+                                ) : (
+                                    <div className="grid md:grid-cols-2 gap-6">
+                                        {hackathonData.map((project) => (
+                                            <HackathonProjectCard key={project.id} project={project} />
+                                        ))}
+                                    </div>
+                                )
+                            ) : ""
+                        }
 
                         <div ref={messagesEndRef} />
                     </div>
                 </div>
 
-                {messages.length === 0 && (
+                {messages.length === 0 && assistantMode === "Ecosystem" ? (
                     <div className="px-6 py-4 border-t border-gray-800">
                         <div className="max-w-4xl mx-auto">
                             <p className="text-sm text-gray-400 mb-3">Quick questions to get started!</p>
@@ -574,7 +589,7 @@ export default function ChatPage() {
                             </div>
                         </div>
                     </div>
-                )}
+                ) : ""}
 
                 <div className="border-t border-gray-800 bg-black/80 backdrop-blur-sm">
                     <div className="max-w-4xl mx-auto px-6 py-4">
@@ -596,16 +611,50 @@ export default function ChatPage() {
                             </div>
                         )}
 
-                        <form onSubmit={handleSubmit} className="flex space-x-3">
-                            <Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                onClick={() => fileInputRef.current?.click()}
-                                className="cursor-pointer border-gray-600 text-gray-400 hover:bg-gray-800 hover:text-white"
-                            >
-                                <Paperclip className="cursor-pointer w-4 h-4" />
-                            </Button>
+                        <form onSubmit={async (e) => {
+                            e.preventDefault()
+                            try {
+
+                                if (assistantMode === "Ecosystem") {
+                                    handleSubmit()
+                                } else if (assistantMode === "Hackathons") {
+                                    setIsHackathonsLoading(true)
+                                    console.log(input)
+                                    const response = await fetch(`/api/hackathons`, {
+                                        method: "POST",
+                                        headers: {
+                                            "Content-Type": "application/json"
+                                        },
+                                        body: JSON.stringify({
+                                            query: input,
+                                            hackathon: collosseumEvent?.toLowerCase()
+                                        })
+                                    })
+                                    const data = await response.json()
+                                    setHackathonData(data.projects)
+                                    setInput("")
+                                }
+                            } catch (err) {
+                                console.error(err)
+                            } finally {
+                                setIsHackathonsLoading(false)
+                            }
+
+                        }} className="flex space-x-3">
+                            {
+                                assistantMode === "Ecosystem" ? (
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => fileInputRef.current?.click()}
+                                        className="cursor-pointer border-gray-600 text-gray-400 hover:bg-gray-800 hover:text-white"
+                                    >
+                                        <Paperclip className="cursor-pointer w-4 h-4" />
+                                    </Button>
+                                ) : ""
+                            }
+
 
                             <Input
                                 name="prompt"
@@ -614,7 +663,7 @@ export default function ChatPage() {
                                 onChange={handleInputChange}
                                 placeholder="Ask me anything about Solana..."
                                 className="flex-1 bg-gray-900/80 border-gray-700/50 text-white placeholder-gray-400 focus:border-[var(--solana-purple)]/50"
-                                disabled={status === "streaming"}
+                                disabled={status === "streaming" || isHackathonsLoading}
                             />
 
                             <Button
@@ -630,7 +679,7 @@ export default function ChatPage() {
 
                             <Button
                                 type="submit"
-                                className="cursor-pointer bg-gradient-to-r from-[var(--solana-purple)] to-[var(--solana-green)] hover:from-[var(--solana-purple)]/90 hover:to-[var(--solana-green)]/90 text-white"
+                                className={cn("bg-gradient-to-r from-[var(--solana-purple)] to-[var(--solana-green)] hover:from-[var(--solana-purple)]/90 hover:to-[var(--solana-green)]/90 text-white", isHackathonsLoading ? "select-none cursor-default pointer-events-none" : "cursor-pointer")}
                             >
                                 <Send className="w-4 h-4" />
                             </Button>
