@@ -9,14 +9,10 @@ import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuSeparator,
-    DropdownMenuSub,
-    DropdownMenuSubContent,
-    DropdownMenuSubTrigger,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Send, User, ChevronDown, Zap, Trophy, Globe } from "lucide-react"
-import { Mic, MicOff, Paperclip, Search, Settings, History, X, FileText, ImageIcon, Menu, Pencil } from "lucide-react"
+import { Pencil } from "lucide-react"
 import { useState, useRef, useEffect } from "react"
 import { useWallet } from "@solana/wallet-adapter-react"
 import { EarlyAccess } from "@/components/views/early-access"
@@ -28,25 +24,9 @@ import { HackathonProject, HackathonProjectCard } from "@/components/hackathons/
 import { cn } from "@/lib/utils";
 import { HackathonLoader } from "@/components/hackathons/hackathon-loader";
 
-interface Message {
-    id: string
-    content: string
-    sender: "user" | "ai"
-    timestamp: Date
-}
-
-interface ChatHistory {
-    id: string
-    title: string
-    lastMessage: string
-    timestamp: Date
-    messages: Message[]
-}
-
 type AssistantMode = "Ecosystem" | "Blinks" | "Hackathons"
-type HackathonSubMode = "Colosseum" | "Super Team" | null
+type HackathonSubMode = "Colosseum" | null
 type CollosseumEvent = "Renaissance" | "Radar" | "Breakout" | null
-type SuperTeamEvent = "Solana Copa America" | null
 
 const scrollingStyle = `
   @keyframes scroll-left {
@@ -77,49 +57,15 @@ export default function ChatPage() {
 
         },
     });
+
     const { connected, publicKey } = useWallet()
 
     const [assistantMode, setAssistantMode] = useState<AssistantMode>("Ecosystem")
     const [hackathonSubMode, setHackathonSubMode] = useState<HackathonSubMode>(null)
     const [collosseumEvent, setCollosseumEvent] = useState<CollosseumEvent>(null)
-    const [superTeamEvent, setSuperTeamEvent] = useState<SuperTeamEvent>(null)
-    const [isRecording, setIsRecording] = useState(false)
-    const [showSidebar, setShowSidebar] = useState(false)
     const [hackathonData, setHackathonData] = useState<HackathonProject[]>([])
     const [isHackathonsLoading, setIsHackathonsLoading] = useState(false)
-    const [showChatHistory, setShowChatHistory] = useState(false)
-    const [chatHistories] = useState<ChatHistory[]>([
-        {
-            id: "1",
-            title: "Getting Started with Solana",
-            lastMessage: "What is Solana and how does it work?",
-            timestamp: new Date(Date.now() - 86400000),
-            messages: [],
-        },
-        {
-            id: "2",
-            title: "Solana Blinks Tutorial",
-            lastMessage: "How do Solana Blinks work?",
-            timestamp: new Date(Date.now() - 172800000),
-            messages: [],
-        },
-        {
-            id: "3",
-            title: "DeFi Projects on Solana",
-            lastMessage: "What are the best Solana projects to explore?",
-            timestamp: new Date(Date.now() - 259200000),
-            messages: [],
-        },
-    ])
-    const [searchQuery, setSearchQuery] = useState("")
-    const [currentChatId] = useState<string | null>(null)
-    const userProfile = {
-        name: "Anonymous User",
-        email: "user@example.com",
-        avatar: "/placeholder.svg?height=32&width=32",
-    }
-    const [selectedFile, setSelectedFile] = useState<File | null>(null)
-    const fileInputRef = useRef<HTMLInputElement>(null)
+    console.log(assistantMode)
 
     const preSelectedQuestions = [
         "What is Solana and how does it work?",
@@ -138,42 +84,17 @@ export default function ChatPage() {
         setHackathonData([])
     }
 
-    // const getModeDescription = () => {
-    //     if (assistantMode === "Blinks") {
-    //         return "Specialized in Solana Blinks and blockchain interactions"
-    //     } else if (assistantMode === "Hackathons") {
-    //         if (hackathonSubMode === "Colosseum") {
-    //             if (collosseumEvent === "Renaissance") {
-    //                 return "Focused on Colosseum Renaissance hackathon"
-    //             } else if (collosseumEvent === "Radar") {
-    //                 return "Focused on Colosseum Radar hackathon"
-    //             }
-    //             return "Focused on Colosseum hackathons"
-    //         } else if (hackathonSubMode === "Super Team") {
-    //             if (superTeamEvent === "Solana Copa America") {
-    //                 return "Focused on Solana Copa America by Super Team"
-    //             }
-    //             return "Focused on Super Team hackathons"
-    //         }
-    //         return "Specialized in Solana hackathons and competitions"
-    //     }
-    //     return "General Solana ecosystem expert"
-    // }
-
     const handleModeChange = (
         mode: AssistantMode,
         subMode?: HackathonSubMode,
-        event?: CollosseumEvent | SuperTeamEvent,
+        event?: CollosseumEvent,
     ) => {
         setAssistantMode(mode)
         setHackathonSubMode(subMode || null)
         setCollosseumEvent(null)
-        setSuperTeamEvent(null)
 
         if (mode === "Hackathons" && subMode === "Colosseum" && event) {
             setCollosseumEvent(event as CollosseumEvent)
-        } else if (mode === "Hackathons" && subMode === "Super Team" && event) {
-            setSuperTeamEvent(event as SuperTeamEvent)
         }
     }
 
@@ -193,9 +114,6 @@ export default function ChatPage() {
             if (hackathonSubMode === "Colosseum") {
                 if (collosseumEvent) return `Colosseum - ${collosseumEvent}`
                 return "Colosseum"
-            } else if (hackathonSubMode === "Super Team") {
-                if (superTeamEvent) return `Super Team - ${superTeamEvent}`
-                return "Super Team"
             }
         }
         return assistantMode
@@ -211,40 +129,6 @@ export default function ChatPage() {
         }
     }, [])
 
-    const filteredChatHistories = chatHistories.filter(
-        (chat) =>
-            chat.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            chat.lastMessage.toLowerCase().includes(searchQuery.toLowerCase()),
-    )
-
-    // const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    //     const file = event.target.files?.[0]
-    //     if (file) {
-    //         setSelectedFile(file)
-    //         const fileMessage = `📎 Uploaded file: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`
-    //         handleSendMessage(fileMessage)
-    //     }
-    // }
-
-    const handleVoiceToggle = () => {
-        setIsRecording(!isRecording)
-        if (!isRecording) {
-            console.log("Starting voice recording...")
-        } else {
-            console.log("Stopping voice recording...")
-        }
-    }
-
-    const getFileIcon = (fileName: string) => {
-        const extension = fileName.split(".").pop()?.toLowerCase()
-        if (["jpg", "jpeg", "png", "gif", "webp"].includes(extension || "")) {
-            return <ImageIcon className="w-4 h-4" />
-        } else if (extension === "pdf") {
-            return <FileText className="w-4 h-4" />
-        }
-        return <Paperclip className="w-4 h-4" />
-    }
-
     if (!connected || !publicKey) {
         return (
             <EarlyAccess />
@@ -258,15 +142,6 @@ export default function ChatPage() {
                     <div className="max-w-4xl mx-auto px-6 py-4 flex flex-col items-center justify-between gap-4 md:flex-row">
                         <div className="w-full flex justify-between items-center gap-4">
                             <div className="flex items-center space-x-4">
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => setShowSidebar(!showSidebar)}
-                                    className="cursor-pointer border-gray-600 text-gray-400 hover:bg-gray-800 hover:text-white"
-                                >
-                                    <Menu className="w-4 h-4" />
-                                </Button>
-
                                 <Button onClick={cleanConversation} variant="outline" size="sm" className="cursor-pointer border-gray-600 text-gray-400 hover:bg-gray-800 hover:text-white">
                                     <Pencil className="w-4 h-4" />
                                 </Button>
@@ -292,7 +167,7 @@ export default function ChatPage() {
                                         <Globe className="w-4 h-4 mr-2" />
                                         Ecosystem
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem onClick={() => handleModeChange("Blinks")}>
+                                    {/* <DropdownMenuItem onClick={() => handleModeChange("Blinks")}>
                                         <Zap className="w-4 h-4 mr-2" />
                                         Blinks
                                     </DropdownMenuItem>
@@ -316,129 +191,13 @@ export default function ChatPage() {
                                                     </DropdownMenuItem>
                                                 </DropdownMenuSubContent>
                                             </DropdownMenuSub>
-                                            <DropdownMenuSeparator />
                                         </DropdownMenuSubContent>
-                                    </DropdownMenuSub>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button variant="ghost" size="sm" className="cursor-pointer w-8 h-8 p-1 rounded-full border-2 border-[var(--solana-purple/30)]">
-                                        <User className="w-8 h-8 text-white " />
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent className="bg-gray-900 border-gray-700 w-56">
-                                    <div className="px-3 py-2 border-b border-gray-700">
-                                        <p className="font-medium text-white">{userProfile.name}</p>
-                                        <p className="text-sm text-gray-400">{userProfile.email}</p>
-                                    </div>
-                                    <DropdownMenuItem>
-                                        <Settings className="w-4 h-4 mr-2" />
-                                        Profile Settings
-                                    </DropdownMenuItem>
+                                    </DropdownMenuSub> */}
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         </div>
                     </div>
                 </header>
-
-                {showSidebar && (
-                    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" onClick={() => setShowSidebar(false)}>
-                        <div
-                            className="absolute left-0 top-0 h-full w-80 bg-gray-900 border-r border-gray-700 shadow-xl"
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            <div className="p-4 border-b border-gray-700">
-                                <div className="flex items-center justify-end mb-4">
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        onClick={() => setShowSidebar(false)}
-                                        className="cursor-pointer text-gray-400 hover:text-white"
-                                    >
-                                        <X className="w-4 h-4" />
-                                    </Button>
-                                </div>
-                            </div>
-
-                            <div className="p-4 space-y-2">
-                                <Button
-                                    variant="ghost"
-                                    className="cursor-pointer w-full justify-start text-gray-300 hover:text-white hover:bg-gray-800"
-                                >
-                                    <Pencil className="w-4 h-4" />
-                                    New Chat
-                                </Button>
-
-                                <Button
-                                    variant="ghost"
-                                    onClick={() => {
-                                        setShowChatHistory(true)
-                                        setShowSidebar(false)
-                                    }}
-                                    className="cursor-pointer w-full justify-start text-gray-300 hover:text-white hover:bg-gray-800"
-                                >
-                                    <History className="w-4 h-4 mr-3" />
-                                    Chat History
-                                </Button>
-                            </div>
-                        </div>
-                    </div>
-                )}
-
-                {showChatHistory && (
-                    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" onClick={() => setShowChatHistory(false)}>
-                        <div
-                            className="absolute left-0 top-0 h-full w-80 bg-gray-900 border-r border-gray-700 shadow-xl"
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            <div className="p-4 border-b border-gray-700">
-                                <div className="flex items-center justify-between mb-4">
-                                    <h2 className="text-lg font-semibold text-white">Chat History</h2>
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        onClick={() => setShowChatHistory(false)}
-                                        className="cursor-pointer text-gray-400 hover:text-white"
-                                    >
-                                        <X className="w-4 h-4" />
-                                    </Button>
-                                </div>
-                                <div className="relative">
-                                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                                    <Input
-                                        placeholder="Search conversations..."
-                                        value={searchQuery}
-                                        onChange={(e) => setSearchQuery(e.target.value)}
-                                        className="pl-10 bg-gray-800 border-gray-600 text-white placeholder-gray-400"
-                                    />
-                                </div>
-                            </div>
-                            <div className="overflow-y-auto h-full pb-20">
-                                {filteredChatHistories.map((chat) => (
-                                    <div
-                                        key={chat.id}
-                                        className={`p-4 border-b border-gray-700/50 hover:bg-gray-800/50 cursor-pointer transition-colors ${currentChatId === chat.id ? "bg-gray-800/70" : ""
-                                            }`}
-                                    >
-                                        <h3 className="font-medium text-white text-sm mb-1 truncate">{chat.title}</h3>
-                                        <p className="text-xs text-gray-400 mb-2 truncate">{chat.lastMessage}</p>
-                                        <p className="text-xs text-gray-500">
-                                            {chat.timestamp.toLocaleDateString()}{" "}
-                                            {chat.timestamp.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-                                        </p>
-                                    </div>
-                                ))}
-                                {filteredChatHistories.length === 0 && (
-                                    <div className="p-4 text-center text-gray-400">
-                                        {searchQuery ? "No conversations found" : "No chat history yet"}
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                )}
 
                 <div className="flex-1 overflow-y-auto px-6 py-6">
                     <div className="max-w-4xl mx-auto space-y-6">
@@ -472,65 +231,91 @@ export default function ChatPage() {
 
                         {
                             assistantMode === "Ecosystem" ? (
-                                messages.map((message) => (
-                                    <div key={message.id} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
-                                        <div
-                                            className={`flex items-start space-x-3 max-w-3xl relative ${message.role === "user" ? "flex-row-reverse space-x-reverse" : ""}`}
-                                        >
-                                            <div
-                                                className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${message.role === "user" ? "bg-gray-700" : "bg-black"
-                                                    }`}
-                                            >
-                                                {message.role === "user" ? (
-                                                    <User className="w-4 h-4 text-white" />
-                                                ) : (
-                                                    <Image
-                                                        src="/images/brand/logo.png"
-                                                        width={854}
-                                                        height={210}
-                                                        title="Logo"
-                                                        alt="Logo"
-                                                        className="max-w-6 h-auto w-full"
-                                                        priority
-                                                    />
-                                                )}
-                                            </div>
-                                            <Card
-                                                className={`${message.role === "user"
-                                                    ? "bg-[var(--solana-purple)]/20 border-[var(--solana-purple)]/30"
-                                                    : "bg-gray-900/80 border-gray-700/50"
-                                                    } backdrop-blur-sm py-0`}
-                                            >
-                                                <CardContent className="p-4 flex flex-col justify-start items-start gap-5">
-                                                    <Markdown
-                                                        remarkPlugins={[remarkGfm]}
-                                                        components={{
-                                                            p(props) {
-                                                                const { ...rest } = props
-                                                                return <p className="block" {...rest}></p>
+                                <>
 
-                                                            },
-                                                            a(props) {
-                                                                const { ...rest } = props
-                                                                return <a target="_blank" rel="noopener noreferrer" className="font-semibold cursor-pointer text-solana-green underline" {...rest}></a>
-                                                            },
-                                                            ul(props) {
-                                                                const { ...rest } = props
-                                                                return <ul className="flex flex-col justify-center items-start gap-4" {...rest} />
-                                                            },
-                                                            ol(props) {
-                                                                const { ...rest } = props
-                                                                return <ol className="flex flex-col justify-center items-start gap-4" {...rest} />
-                                                            },
-                                                        }}
-                                                    >
-                                                        {message.content}
-                                                    </Markdown>
-                                                </CardContent>
-                                            </Card>
+                                    {messages.map((message) => (
+                                        <div key={message.id} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
+                                            <div
+                                                className={`flex items-start space-x-3 max-w-3xl relative ${message.role === "user" ? "flex-row-reverse space-x-reverse" : ""}`}
+                                            >
+                                                <div
+                                                    className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${message.role === "user" ? "bg-gray-700" : "bg-black"
+                                                        }`}
+                                                >
+                                                    {message.role === "user" ? (
+                                                        <User className="w-4 h-4 text-white" />
+                                                    ) : (
+                                                        <Image
+                                                            src="/images/brand/logo.png"
+                                                            width={854}
+                                                            height={210}
+                                                            title="Logo"
+                                                            alt="Logo"
+                                                            className="max-w-6 h-auto w-full"
+                                                            priority
+                                                        />
+                                                    )}
+                                                </div>
+                                                <Card
+                                                    className={`${message.role === "user"
+                                                        ? "bg-[var(--solana-purple)]/20 border-[var(--solana-purple)]/30"
+                                                        : "bg-gray-900/80 border-gray-700/50"
+                                                        } backdrop-blur-sm py-0`}
+                                                >
+                                                    <CardContent className="p-4 flex flex-col justify-start items-start gap-5">
+                                                        <Markdown
+                                                            remarkPlugins={[remarkGfm]}
+                                                            components={{
+                                                                p(props) {
+                                                                    const { ...rest } = props
+                                                                    return <p className="block" {...rest}></p>
+
+                                                                },
+                                                                a(props) {
+                                                                    const { ...rest } = props
+                                                                    return <a target="_blank" rel="noopener noreferrer" className="font-semibold cursor-pointer text-solana-green underline" {...rest}></a>
+                                                                },
+                                                                ul(props) {
+                                                                    const { ...rest } = props
+                                                                    return <ul className="flex flex-col justify-center items-start gap-4" {...rest} />
+                                                                },
+                                                                ol(props) {
+                                                                    const { ...rest } = props
+                                                                    return <ol className="flex flex-col justify-center items-start gap-4" {...rest} />
+                                                                },
+                                                            }}
+                                                        >
+                                                            {message.content}
+                                                        </Markdown>
+                                                    </CardContent>
+                                                </Card>
+                                            </div>
                                         </div>
-                                    </div>
-                                ))
+                                    ))}
+                                    {status === "submitted" ? (
+                                        <div
+                                            className={`space-x-3 max-w-max h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-black`}
+                                        >
+                                            <Image
+                                                src="/images/brand/logo.png"
+                                                width={854}
+                                                height={210}
+                                                title="Logo"
+                                                alt="Logo"
+                                                className="max-w-6 h-auto w-full"
+                                                priority
+                                            />
+
+                                            <div className="flex items-center justify-center space-x-2">
+                                                <div className="flex space-x-1">
+                                                    <div className="w-2 h-2 bg-white rounded-full animate-bounce"></div>
+                                                    <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                                                    <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ) : ""}
+                                </>
                             ) : ""
                         }
 
@@ -593,24 +378,6 @@ export default function ChatPage() {
 
                 <div className="border-t border-gray-800 bg-black/80 backdrop-blur-sm">
                     <div className="max-w-4xl mx-auto px-6 py-4">
-                        {selectedFile && (
-                            <div className="mb-3 p-3 bg-gray-800/50 rounded-lg border border-gray-700 flex items-center justify-between">
-                                <div className="flex items-center space-x-2">
-                                    {getFileIcon(selectedFile.name)}
-                                    <span className="text-sm text-gray-300">{selectedFile.name}</span>
-                                    <span className="text-xs text-gray-500">({(selectedFile.size / 1024 / 1024).toFixed(2)} MB)</span>
-                                </div>
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => setSelectedFile(null)}
-                                    className="cursor-pointer text-gray-400 hover:text-white"
-                                >
-                                    <X className="w-4 h-4" />
-                                </Button>
-                            </div>
-                        )}
-
                         <form onSubmit={async (e) => {
                             e.preventDefault()
                             try {
@@ -641,21 +408,6 @@ export default function ChatPage() {
                             }
 
                         }} className="flex space-x-3">
-                            {
-                                assistantMode === "Ecosystem" ? (
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => fileInputRef.current?.click()}
-                                        className="cursor-pointer border-gray-600 text-gray-400 hover:bg-gray-800 hover:text-white"
-                                    >
-                                        <Paperclip className="cursor-pointer w-4 h-4" />
-                                    </Button>
-                                ) : ""
-                            }
-
-
                             <Input
                                 name="prompt"
                                 autoComplete="off"
@@ -663,23 +415,12 @@ export default function ChatPage() {
                                 onChange={handleInputChange}
                                 placeholder="Ask me anything about Solana..."
                                 className="flex-1 bg-gray-900/80 border-gray-700/50 text-white placeholder-gray-400 focus:border-[var(--solana-purple)]/50"
-                                disabled={status === "streaming" || isHackathonsLoading}
+                                disabled={status === "streaming" || status === "submitted" || isHackathonsLoading}
                             />
 
                             <Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                onClick={handleVoiceToggle}
-                                className={`cursor-pointer border-gray-600 hover:bg-gray-800 ${isRecording ? "text-red-400 border-red-400/50 bg-red-400/10" : "text-gray-400 hover:text-white"
-                                    }`}
-                            >
-                                {isRecording ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
-                            </Button>
-
-                            <Button
                                 type="submit"
-                                className={cn("bg-gradient-to-r from-[var(--solana-purple)] to-[var(--solana-green)] hover:from-[var(--solana-purple)]/90 hover:to-[var(--solana-green)]/90 text-white", isHackathonsLoading ? "select-none cursor-default pointer-events-none" : "cursor-pointer")}
+                                className={cn(status === "streaming" || status === "submitted" || isHackathonsLoading ? "select-none cursor-default pointer-events-none bg-gray-800/50 text-white/30" : "bg-gradient-to-r from-[var(--solana-purple)] to-[var(--solana-green)] hover:from-[var(--solana-purple)]/90 hover:to-[var(--solana-green)]/90  cursor-pointer text-white")}
                             >
                                 <Send className="w-4 h-4" />
                             </Button>
@@ -687,7 +428,6 @@ export default function ChatPage() {
 
                         <p className="text-xs text-gray-500 mt-2 text-center">
                             Sol AI can make mistakes. Please verify important information.
-                            {isRecording && <span className="text-red-400 ml-2">🔴 Recording...</span>}
                         </p>
                         <span className="w-full text-xs text-gray-200 text-center inline-block mx-auto mt-4">From 🌎 LATAM to Solana 💜</span>
 

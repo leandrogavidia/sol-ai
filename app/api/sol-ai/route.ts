@@ -3,12 +3,11 @@ import { streamText, convertToCoreMessages } from "ai";
 
 export const maxDuration = 30;
 
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY || "";
 const SOL_AI_API = process.env.SOL_AI_API || "";
 const SOL_AI_API_KEY = process.env.SOL_AI_API_KEY || "";
 const GROK_API = process.env.GROK_API || ""
 
-if (!GROK_API || !OPENAI_API_KEY || !SOL_AI_API || !SOL_AI_API_KEY) {
+if (!GROK_API || !SOL_AI_API || !SOL_AI_API_KEY) {
   throw new Error("Missing environment variables, check the .env.example file");
 }
 
@@ -29,9 +28,6 @@ export async function POST(req: Request) {
 
       Always include links to X (Twitter) profiles and posts or relevant references.
     `;
-
-    // const query = messages.at(-1).content;
-    // const url = `${SOL_AI_API}/query`;
 
     messages.unshift({
       role: "system",
