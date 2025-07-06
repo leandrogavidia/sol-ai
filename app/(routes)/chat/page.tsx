@@ -23,6 +23,7 @@ import Image from "next/image"
 import { HackathonProject, HackathonProjectCard } from "@/components/hackathons/hackathon-project-card";
 import { cn } from "@/lib/utils";
 import { HackathonLoader } from "@/components/hackathons/hackathon-loader";
+import { BlinkCarousel } from "@/components/blinks/blink-carousel";
 
 type AssistantMode = "Ecosystem" | "Blinks" | "Hackathons"
 type HackathonSubMode = "Colosseum" | null
@@ -58,6 +59,14 @@ export default function ChatPage() {
         },
     });
 
+    const blinksUrl = [
+        "solana-action:https://alldomains.id/api/actions/blink?_brf=b57a9e16-2bb7-4e68-ac71-16ed54e5ecf8&_bin=b0953247-af8a-4d6f-bb66-d7c6258159be",
+        "https://leandrogavidia.com/api/actions/hosico",
+        "solana-action:https://hedgehog.markets/api/v2/classic/39BBW9HS9ehhFS4HkAfCJjxZ6MDLfHJcVop5fLZbf5Eq?_brf=4a122631-8506-4ad0-84c6-ff4bc1c0b1bb&_bin=2592f7a1-ffde-4c08-8c94-556bbed84d63",
+        "solana-action:https://tensor.dial.to/bid/6PnPR2rcJdUpd6Mx2vsnsucWG3uAX3ahy66ARACng612?_brf=fa955c0b-6975-4de3-9bad-4e192e4746aa&_bin=a4e5ee9c-649d-4cb8-9c42-d3a0bc7458a4",
+        "solana-action:https://flip.sendarcade.fun/api/actions/flip?_brf=9867785e-044d-4158-9b07-80a00db05052&_bin=9f415adc-978d-4bfd-a5b8-66b0ca13f37e"
+    ]
+
     const { connected, publicKey } = useWallet()
 
     const [assistantMode, setAssistantMode] = useState<AssistantMode>("Ecosystem")
@@ -65,7 +74,8 @@ export default function ChatPage() {
     const [collosseumEvent, setCollosseumEvent] = useState<CollosseumEvent>(null)
     const [hackathonData, setHackathonData] = useState<HackathonProject[]>([])
     const [isHackathonsLoading, setIsHackathonsLoading] = useState(false)
-    console.log(assistantMode)
+    const [checkedAccess, setCheckedAccess] = useState(false)
+    const [isVerified, setIsVerified] = useState(false)
 
     const preSelectedQuestions = [
         "What is Solana and how does it work?",
@@ -129,10 +139,30 @@ export default function ChatPage() {
         }
     }, [])
 
-    if (!connected || !publicKey) {
-        return (
-            <EarlyAccess />
-        )
+    useEffect(() => {
+        const checkAccess = async () => {
+            if (!connected || !publicKey) return
+
+            try {
+                const res = await fetch(`/api/verify-status?wallet=${publicKey.toBase58()}`)
+                const result = await res.json()
+
+                if (res.ok) {
+                    setIsVerified(result.verified)
+                }
+            } catch (err) {
+                console.error('Failed to check verification status', err)
+            } finally {
+                setCheckedAccess(true)
+            }
+        }
+
+        checkAccess()
+    }, [connected, publicKey])
+
+
+    if (!checkedAccess || !isVerified) {
+        return <EarlyAccess />
     }
 
     return (
@@ -167,11 +197,11 @@ export default function ChatPage() {
                                         <Globe className="w-4 h-4 mr-2" />
                                         Ecosystem
                                     </DropdownMenuItem>
-                                    {/* <DropdownMenuItem onClick={() => handleModeChange("Blinks")}>
+                                    <DropdownMenuItem onClick={() => handleModeChange("Blinks")}>
                                         <Zap className="w-4 h-4 mr-2" />
                                         Blinks
                                     </DropdownMenuItem>
-                                    <DropdownMenuSub>
+                                    {/* <DropdownMenuSub>
                                         <DropdownMenuSubTrigger>
                                             <Trophy className="w-4 h-4 mr-2" />
                                             Hackathons
@@ -331,6 +361,12 @@ export default function ChatPage() {
                                     </div>
                                 )
                             ) : ""
+                        }
+
+                        {
+                            assistantMode === "Blinks" ? (
+                                <BlinkCarousel blinksUrl={blinksUrl} />
+                            ) : null
                         }
 
                         <div ref={messagesEndRef} />

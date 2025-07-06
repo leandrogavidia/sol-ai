@@ -210,7 +210,7 @@ export default function HomePage() {
               {faqs.map((faq, index) => (
                 <Card key={index} className="cursor-pointer bg-gray-900/80 border-gray-700/50 backdrop-blur-sm hover:bg-gray-800/50 transition-colors">
                   <CardContent className="p-0">
-                    <button
+                    <Button
                       onClick={() => setOpenFaq(openFaq === index ? null : index)}
                       className="cursor-pointer w-full p-6 text-left flex items-center justify-between rounded-lg"
                     >
@@ -220,7 +220,7 @@ export default function HomePage() {
                       >
                         <Plus className={`w-5 h-5 text-white"}`} />
                       </div>
-                    </button>
+                    </Button>
                     {openFaq === index && (
                       <div className="px-6 pb-6">
                         <p className="text-gray-300 leading-relaxed">{faq.answer}</p>
