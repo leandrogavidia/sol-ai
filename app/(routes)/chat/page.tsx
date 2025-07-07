@@ -26,6 +26,7 @@ import { HackathonProject, HackathonProjectCard } from "@/components/hackathons/
 import { cn } from "@/lib/utils";
 import { HackathonLoader } from "@/components/hackathons/hackathon-loader";
 import { BlinkCarousel } from "@/components/blinks/blink-carousel";
+import { BlinkSkeleton } from "@/components/blinks/blink-skeleton";
 
 type AssistantMode = "Ecosystem" | "Blinks" | "Hackathons"
 type HackathonSubMode = "Colosseum" | null
@@ -69,9 +70,11 @@ export default function ChatPage() {
     const [hackathonData, setHackathonData] = useState<HackathonProject[]>([])
     const [isHackathonsLoading, setIsHackathonsLoading] = useState(false)
     const [isBlinksLoading, setIsBlinksLoading] = useState(false)
+    const [isQuestionLimitLoading, setIsQuestionLimitLoading] = useState(false)
     const [checkedAccess, setCheckedAccess] = useState(false)
     const [isVerified, setIsVerified] = useState(false)
     const [blinksUrl, setBlinksUrl] = useState<string[]>([]);
+    const [questionCount, setQuestionCount] = useState<number>(0)
 
     const preSelectedQuestions = [
         "What is Solana and how does it work?",
@@ -88,6 +91,7 @@ export default function ChatPage() {
         setMessages([])
         setInput("")
         setHackathonData([])
+        setBlinksUrl([])
     }
 
     const handleModeChange = (
@@ -127,26 +131,48 @@ export default function ChatPage() {
 
     const handleFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
+
+        const walletAddress = publicKey?.toBase58()
+        if (!walletAddress) return
+
+        if (questionCount >= 15) {
+            alert("You've reached your 15-question limit for today.")
+            return
+        }
+
+        setIsQuestionLimitLoading(true)
+
         try {
+            let success = false
 
             if (assistantMode === "Ecosystem") {
                 handleSubmit()
+                success = true
+
             } else if (assistantMode === "Hackathons") {
                 setIsHackathonsLoading(true)
-
-                const response = await fetch(`/api/hackathons`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        query: input,
-                        hackathon: collosseumEvent?.toLowerCase()
+                try {
+                    const response = await fetch(`/api/hackathons`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            query: input,
+                            hackathon: collosseumEvent?.toLowerCase()
+                        })
                     })
-                })
-                const data = await response.json()
-                setHackathonData(data.projects)
-                setInput("")
+
+                    if (!response.ok) throw new Error("Hackathon API error")
+
+                    const data = await response.json()
+                    setHackathonData(data?.projects)
+                    setInput("")
+                    success = true
+                } catch (err) {
+                    console.error("Failed to fetch hackathons:", err)
+                }
+
             } else if (assistantMode === "Blinks") {
                 setIsBlinksLoading(true)
                 try {
@@ -156,23 +182,40 @@ export default function ChatPage() {
                             "Content-Type": "application/json",
                         },
                         body: JSON.stringify({ query: input }),
-                    });
+                    })
 
-                    const data = await response.json();
-                    const urls = data.blinks?.map((item: { action_url: string }) => item.action_url) || [];
-                    setBlinksUrl(urls);
-                    setInput("");
+                    if (!response.ok) throw new Error("Blinks API error")
+
+                    const data = await response.json()
+                    const urls = data?.blinks?.map((item: { action_url: string }) => item.action_url) || []
+                    setBlinksUrl(urls)
+                    setInput("")
+                    success = true
                 } catch (err) {
-                    console.error("Failed to fetch blinks:", err);
+                    console.error("Failed to fetch blinks:", err)
                 }
             }
+
+            if (success) {
+                const res = await fetch(`/api/question-limit`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ wallet: walletAddress })
+                })
+
+                const result = await res.json()
+                setQuestionCount(result?.question_count || questionCount)
+            }
+
         } catch (err) {
-            console.error(err)
+            console.error("Submission error:", err)
         } finally {
             setIsHackathonsLoading(false)
             setIsBlinksLoading(false)
+            setIsQuestionLimitLoading(false)
         }
-
     }
 
     useEffect(() => {
@@ -194,7 +237,7 @@ export default function ChatPage() {
                 const result = await res.json()
 
                 if (res.ok) {
-                    setIsVerified(result.verified)
+                    setIsVerified(result?.verified)
                 }
             } catch (err) {
                 console.error('Failed to check verification status', err)
@@ -206,6 +249,26 @@ export default function ChatPage() {
         checkAccess()
     }, [connected, publicKey])
 
+    useEffect(() => {
+        const fetchQuestionCount = async () => {
+            if (!connected || !publicKey) return;
+
+            try {
+                const res = await fetch(`/api/question-limit?wallet=${publicKey.toBase58()}`);
+                const data = await res.json();
+
+                if (res.ok) {
+                    setQuestionCount(data?.question_count || 0);
+                } else {
+                    console.warn("Failed to get question count:", data?.error);
+                }
+            } catch (err) {
+                console.error("Error fetching question count:", err);
+            }
+        }
+
+        fetchQuestionCount();
+    }, [connected, publicKey]);
 
     if (!checkedAccess || !isVerified) {
         return <EarlyAccess />
@@ -305,6 +368,8 @@ export default function ChatPage() {
                                                 ) : (
                                                     <>Exploring Solana Hackathons? I&apos;m here to help you discover projects, past winners, and more.</>
                                                 )
+                                            ) : assistantMode === "Blinks" ? (
+                                                <><strong className="text-solana-purple">Blinks</strong> provide a Solana gateway to the entire internet. Which blinks would you like to explore?</>
                                             ) : (
                                                 <>Hi there! I&apos;m Sol AI, your virtual assistant ready to help you explore Solana. How can I assist you today?</>
                                             )}
@@ -408,7 +473,7 @@ export default function ChatPage() {
                                     <HackathonLoader />
                                 ) : (
                                     <div className="grid md:grid-cols-2 gap-6">
-                                        {hackathonData.map((project) => (
+                                        {hackathonData?.map((project) => (
                                             <HackathonProjectCard key={project.id} project={project} />
                                         ))}
                                     </div>
@@ -417,8 +482,14 @@ export default function ChatPage() {
                         }
 
                         {
-                            assistantMode === "Blinks" && blinksUrl.length > 0 ? (
-                                <BlinkCarousel blinksUrl={blinksUrl} />
+                            assistantMode === "Blinks" ? (
+                                isBlinksLoading ? (
+                                    <BlinkSkeleton />
+                                ) : (
+                                    blinksUrl.length > 0 ? (
+                                        <BlinkCarousel blinksUrl={blinksUrl} />
+                                    ) : ""
+                                )
                             ) : null
                         }
 
@@ -475,20 +546,25 @@ export default function ChatPage() {
                                 onChange={handleInputChange}
                                 placeholder="Ask me anything about Solana..."
                                 className="flex-1 bg-gray-900/80 border-gray-700/50 text-white placeholder-gray-400 focus:border-[var(--solana-purple)]/50"
-                                disabled={status === "streaming" || status === "submitted" || isHackathonsLoading || isBlinksLoading}
+                                disabled={status === "streaming" || status === "submitted" || isHackathonsLoading || isBlinksLoading || isQuestionLimitLoading}
                             />
 
                             <Button
                                 type="submit"
-                                className={cn(status === "streaming" || status === "submitted" || isHackathonsLoading || isBlinksLoading ? "select-none cursor-default pointer-events-none bg-gray-800/50 text-white/30" : "bg-gradient-to-r from-[var(--solana-purple)] to-[var(--solana-green)] hover:from-[var(--solana-purple)]/90 hover:to-[var(--solana-green)]/90  cursor-pointer text-white")}
+                                className={cn(status === "streaming" || status === "submitted" || isHackathonsLoading || isBlinksLoading || isQuestionLimitLoading ? "select-none cursor-default pointer-events-none bg-gray-800/50 text-white/30" : "bg-gradient-to-r from-[var(--solana-purple)] to-[var(--solana-green)] hover:from-[var(--solana-purple)]/90 hover:to-[var(--solana-green)]/90  cursor-pointer text-white")}
                             >
                                 <Send className="w-4 h-4" />
                             </Button>
                         </form>
 
+                        <p className="text-xs text-gray-400 text-left mt-2 mb-2">
+                            {`Questions today: ${questionCount} / 15`}
+                        </p>
+
                         <p className="text-xs text-gray-500 mt-2 text-center">
                             Sol AI can make mistakes. Please verify important information.
                         </p>
+
                         <span className="w-full text-xs text-gray-200 text-center inline-block mx-auto mt-4">From 🌎 LATAM to Solana 💜</span>
 
                     </div>

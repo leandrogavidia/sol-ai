@@ -27,6 +27,8 @@ export async function POST(req: Request) {
       Always focus primarily on Solana, rather than other blockchains or topics.
 
       Always include links to X (Twitter) profiles and posts or relevant references.
+
+      Any information regarding DeFi or related topics is for educational purposes only and not investment advice. Always DYOR (Do Your Own Research).
     `;
 
     messages.unshift({

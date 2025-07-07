@@ -25,5 +25,5 @@
 3. create a `.env` file with the following env variables:
     - `OPENAI_API_KEY`
     - `GOOGLE_GENERATIVE_AI_API_KEY`
-    - `NEXT_PUBLIC_RPC`
+    - `NEXT_PUBLIC_RPC_URL`
 3. `pnpm run dev`

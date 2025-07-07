@@ -1,6 +1,6 @@
 export const BlinkSkeleton = () => {
     return (
-        <div className="w-full mx-auto animate-pulse rounded-lg border border-gray-700 bg-gray-900 p-4 space-y-4 shadow-md">
+        <div className="max-w-xl w-full mx-auto animate-pulse rounded-lg border border-gray-700 bg-gray-900 p-4 space-y-4 shadow-md">
             <div className="h-5 w-1/3 bg-gray-700 rounded" />
 
             <div className="w-full h-40 bg-gray-800 rounded" />

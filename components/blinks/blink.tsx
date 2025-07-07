@@ -7,13 +7,14 @@ import {
 
 import { useBlinkSolanaWalletAdapter } from "@dialectlabs/blinks/hooks/solana";
 import { BlinkSkeleton } from "./blink-skeleton";
+import { config } from "@/lib/config";
 
 export function Blink({
     blinkApiUrl
 }: {
     blinkApiUrl: string
 }) {
-    const { adapter } = useBlinkSolanaWalletAdapter("https://mainnet.helius-rpc.com/?api-key=22a5a327-77fd-4021-b6d3-2d1ccb26fb18");
+    const { adapter } = useBlinkSolanaWalletAdapter(config.rpcUrl);
 
     const { blink, isLoading } = useBlink({ url: blinkApiUrl });
 

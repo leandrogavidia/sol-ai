@@ -95,33 +95,44 @@ export function HackathonProjectCard({ project }: { project: HackathonProject })
                         asChild
                         className="border-[var(--solana-purple)]/30 text-[var(--solana-purple)] hover:bg-[var(--solana-purple)]/10 text-xs"
                     >
-                        <Link href={project?.project_link} target="_blank" rel="noopener noreferrer">
+                        <Link href={project.project_link} target="_blank" rel="noopener noreferrer">
                             <ExternalLink className="w-3 h-3 mr-1" />
                             Project
                         </Link>
                     </Button>
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        asChild
-                        className="border-gray-600 text-gray-400 hover:bg-gray-800 text-xs"
-                    >
-                        <Link href={project?.repo_link} target="_blank" rel="noopener noreferrer">
-                            <Github className="w-3 h-3 mr-1" />
-                            Code
-                        </Link>
-                    </Button>
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        asChild
-                        className="border-[var(--solana-green)]/30 text-[var(--solana-green)] hover:bg-[var(--solana-green)]/10 text-xs"
-                    >
-                        <Link href={project?.presentation_link} target="_blank" rel="noopener noreferrer">
-                            <Play className="w-3 h-3 mr-1" />
-                            Pitch
-                        </Link>
-                    </Button>
+
+                    {
+                        project?.repo_link ? (
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                asChild
+                                className="border-gray-600 text-gray-400 hover:bg-gray-800 text-xs"
+                            >
+                                <Link href={project.repo_link} target="_blank" rel="noopener noreferrer">
+                                    <Github className="w-3 h-3 mr-1" />
+                                    Code
+                                </Link>
+                            </Button>
+                        ) : ""
+                    }
+
+                    {
+                        project?.presentation_link ? (
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                asChild
+                                className="border-[var(--solana-green)]/30 text-[var(--solana-green)] hover:bg-[var(--solana-green)]/10 text-xs"
+                            >
+                                <Link href={project.presentation_link} target="_blank" rel="noopener noreferrer">
+                                    <Play className="w-3 h-3 mr-1" />
+                                    Pitch
+                                </Link>
+                            </Button>
+                        ) : ""
+                    }
+
                     {
                         project?.technical_demo_link ? (
                             <Button
@@ -130,7 +141,7 @@ export function HackathonProjectCard({ project }: { project: HackathonProject })
                                 asChild
                                 className="border-gray-600 text-gray-400 hover:bg-gray-800 text-xs"
                             >
-                                <Link href={project?.technical_demo_link} target="_blank" rel="noopener noreferrer">
+                                <Link href={project.technical_demo_link} target="_blank" rel="noopener noreferrer">
                                     <Play className="w-3 h-3 mr-1" />
                                     Demo
                                 </Link>
