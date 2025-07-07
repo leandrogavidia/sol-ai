@@ -10,6 +10,9 @@ import {
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
+    DropdownMenuSub,
+    DropdownMenuSubTrigger,
+    DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu"
 import { Send, User, ChevronDown, Zap, Trophy, Globe } from "lucide-react"
 import { Pencil } from "lucide-react"
@@ -201,7 +204,7 @@ export default function ChatPage() {
                                         <Zap className="w-4 h-4 mr-2" />
                                         Blinks
                                     </DropdownMenuItem>
-                                    {/* <DropdownMenuSub>
+                                    <DropdownMenuSub>
                                         <DropdownMenuSubTrigger>
                                             <Trophy className="w-4 h-4 mr-2" />
                                             Hackathons
@@ -222,7 +225,7 @@ export default function ChatPage() {
                                                 </DropdownMenuSubContent>
                                             </DropdownMenuSub>
                                         </DropdownMenuSubContent>
-                                    </DropdownMenuSub> */}
+                                    </DropdownMenuSub>
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         </div>
@@ -253,7 +256,17 @@ export default function ChatPage() {
                                     className="bg-gray-900/80 border-gray-700/50 backdrop-blur-sm py-0"
                                 >
                                     <CardContent className="p-4">
-                                        <p className="text-gray-100 leading-relaxed">Hi there! I&apos;m Sol AI, your virtual assistant ready to help you explore Solana. How can I assist you today?</p>
+                                        <p className="text-gray-100 leading-relaxed">
+                                            {assistantMode === "Hackathons" ? (
+                                                collosseumEvent ? (
+                                                    <>Welcome to the <strong className="text-solana-purple">{collosseumEvent}</strong> Hackathon on Solana! Ready to explore projects?</>
+                                                ) : (
+                                                    <>Exploring Solana Hackathons? I&apos;m here to help you discover projects, past winners, and more.</>
+                                                )
+                                            ) : (
+                                                <>Hi there! I&apos;m Sol AI, your virtual assistant ready to help you explore Solana. How can I assist you today?</>
+                                            )}
+                                        </p>
                                     </CardContent>
                                 </Card>
                             </div>

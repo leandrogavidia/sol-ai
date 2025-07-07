@@ -72,7 +72,7 @@ export function EarlyAccess() {
         if (connected && publicKey) {
             fetchVerificationStatus()
         }
-    }, [connected, publicKey])
+    }, [connected, publicKey, fetchVerificationStatus])
 
     const canRequestAccess = connected && !exists
     const isUnverified = exists && verified === false
