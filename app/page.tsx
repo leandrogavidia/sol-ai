@@ -57,13 +57,12 @@ export default function HomePage() {
               hackathons, blinks, and much more.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Link href={config.socialMedia.discord} target="_blank">
+              <Link href="/chat" target="_blank">
                 <Button
                   size="lg"
                   className="cursor-pointer bg-gradient-to-r from-[var(--solana-purple)] to-[var(--solana-green)] hover:from-[var(--solana-purple)]/90 hover:to-[var(--solana-green)]/90 text-white px-8 py-3 rounded-xl"
                 >
-                  Join community
-                  <Discord className="ml-1 size-6" />
+                  Early access
                 </Button>
               </Link>
             </div>
@@ -156,14 +155,16 @@ export default function HomePage() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <Card className="bg-gray-900/80 border-gray-700/50 backdrop-blur-sm hover:border-[var(--solana-purple)]/40 transition-all duration-300">
-              <CardContent className="p-8 text-center">
-                <Badge className="absolute -top-2 -right-2 bg-[var(--solana-purple)] text-white text-xs">Coming Soon</Badge>
-                <MessageSquare className="w-12 h-12 text-[var(--solana-purple)] mx-auto mb-4" />
-                <h3 className="text-xl font-semibold mb-3">Sol AI Assistant</h3>
-                <p className="text-gray-300">Intelligent conversations about Solana projects and ecosystem</p>
-              </CardContent>
-            </Card>
+            <Link href="/chat" target="_blank">
+              <Card className="bg-gray-900/80 border-gray-700/50 backdrop-blur-sm hover:border-[var(--solana-purple)]/40 transition-all duration-300">
+                <CardContent className="p-8 text-center">
+                  <Badge className="absolute -top-2 -right-2 bg-[var(--solana-purple)] text-white text-xs">Early Access</Badge>
+                  <MessageSquare className="w-12 h-12 text-[var(--solana-purple)] mx-auto mb-4" />
+                  <h3 className="text-xl font-semibold mb-3">Sol AI Assistant</h3>
+                  <p className="text-gray-300">Intelligent conversations about Solana projects and ecosystem</p>
+                </CardContent>
+              </Card>
+            </Link>
 
             <Card className="bg-gray-900/80 border-gray-700/50 backdrop-blur-sm hover:border-[var(--solana-green)]/40 transition-all duration-300 relative">
               <Badge className="absolute -top-2 -right-2 bg-[var(--solana-green)] text-black text-xs">Coming Soon</Badge>
@@ -214,7 +215,7 @@ export default function HomePage() {
                       onClick={() => setOpenFaq(openFaq === index ? null : index)}
                       className="cursor-pointer w-full p-6 text-left flex items-center justify-between rounded-lg text-white bg-transparent hover:bg-inherit"
                     >
-                      <h3 className="text-lg font-semibold pr-4">{faq.question}</h3>
+                      <h3 className="text-lg font-semibold pr-4 whitespace-normal">{faq.question}</h3>
                       <div
                         className={`transform transition-transform duration-200 ${openFaq === index ? "rotate-45" : ""}`}
                       >
@@ -222,7 +223,7 @@ export default function HomePage() {
                       </div>
                     </Button>
                     {openFaq === index && (
-                      <div className="px-6 pb-6">
+                      <div className="px-6 pb-6 mt-5">
                         <p className="text-gray-300 leading-relaxed">{faq.answer}</p>
                       </div>
                     )}
@@ -252,7 +253,7 @@ export default function HomePage() {
                 <Link href={config.socialMedia.discord} target="_blank">
                   <Button
                     size="lg"
-                    className="bg-gradient-to-r from-[var(--solana-purple)] to-[var(--solana-green)] hover:from-[var(--solana-purple)]/90 hover:to-[var(--solana-green)]/90 text-white px-8 py-3 rounded-xl"
+                    className="cursor-pointer bg-solana-purple/80 hover:bg-solana-purple text-white px-8 py-3 rounded-xl"
                   >
                     Join community
                     <Discord className="ml-1 size-6" />
