@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Send, User, ChevronDown, Zap, Trophy, Globe } from "lucide-react"
 import { Pencil } from "lucide-react"
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, FormEvent } from "react"
 import { useWallet } from "@solana/wallet-adapter-react"
 import { EarlyAccess } from "@/components/views/early-access"
 import { SolanaWalletButton } from "@/components/wallet"
@@ -61,14 +61,6 @@ export default function ChatPage() {
         },
     });
 
-    const blinksUrl = [
-        "https://join.catoff.xyz/api/actions/join-challenge?clusterurl=mainnet",
-        "https://leandrogavidia.com/api/actions/hosico",
-        "solana-action:https://hedgehog.markets/api/v2/classic/39BBW9HS9ehhFS4HkAfCJjxZ6MDLfHJcVop5fLZbf5Eq?_brf=4a122631-8506-4ad0-84c6-ff4bc1c0b1bb&_bin=2592f7a1-ffde-4c08-8c94-556bbed84d63",
-        "solana-action:https://tensor.dial.to/bid/6PnPR2rcJdUpd6Mx2vsnsucWG3uAX3ahy66ARACng612?_brf=fa955c0b-6975-4de3-9bad-4e192e4746aa&_bin=a4e5ee9c-649d-4cb8-9c42-d3a0bc7458a4",
-        "solana-action:https://flip.sendarcade.fun/api/actions/flip?_brf=9867785e-044d-4158-9b07-80a00db05052&_bin=9f415adc-978d-4bfd-a5b8-66b0ca13f37e"
-    ]
-
     const { connected, publicKey } = useWallet()
 
     const [assistantMode, setAssistantMode] = useState<AssistantMode>("Ecosystem")
@@ -76,8 +68,10 @@ export default function ChatPage() {
     const [collosseumEvent, setCollosseumEvent] = useState<CollosseumEvent>(null)
     const [hackathonData, setHackathonData] = useState<HackathonProject[]>([])
     const [isHackathonsLoading, setIsHackathonsLoading] = useState(false)
+    const [isBlinksLoading, setIsBlinksLoading] = useState(false)
     const [checkedAccess, setCheckedAccess] = useState(false)
     const [isVerified, setIsVerified] = useState(false)
+    const [blinksUrl, setBlinksUrl] = useState<string[]>([]);
 
     const preSelectedQuestions = [
         "What is Solana and how does it work?",
@@ -129,6 +123,56 @@ export default function ChatPage() {
             }
         }
         return assistantMode
+    }
+
+    const handleFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        try {
+
+            if (assistantMode === "Ecosystem") {
+                handleSubmit()
+            } else if (assistantMode === "Hackathons") {
+                setIsHackathonsLoading(true)
+
+                const response = await fetch(`/api/hackathons`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        query: input,
+                        hackathon: collosseumEvent?.toLowerCase()
+                    })
+                })
+                const data = await response.json()
+                setHackathonData(data.projects)
+                setInput("")
+            } else if (assistantMode === "Blinks") {
+                setIsBlinksLoading(true)
+                try {
+                    const response = await fetch(`/api/blinks`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ query: input }),
+                    });
+
+                    const data = await response.json();
+                    const urls = data.blinks?.map((item: { action_url: string }) => item.action_url) || [];
+                    setBlinksUrl(urls);
+                    setInput("");
+                } catch (err) {
+                    console.error("Failed to fetch blinks:", err);
+                }
+            }
+        } catch (err) {
+            console.error(err)
+        } finally {
+            setIsHackathonsLoading(false)
+            setIsBlinksLoading(false)
+        }
+
     }
 
     useEffect(() => {
@@ -373,7 +417,7 @@ export default function ChatPage() {
                         }
 
                         {
-                            assistantMode === "Blinks" ? (
+                            assistantMode === "Blinks" && blinksUrl.length > 0 ? (
                                 <BlinkCarousel blinksUrl={blinksUrl} />
                             ) : null
                         }
@@ -423,36 +467,7 @@ export default function ChatPage() {
 
                 <div className="border-t border-gray-800 bg-black/80 backdrop-blur-sm">
                     <div className="max-w-4xl mx-auto px-6 py-4">
-                        <form onSubmit={async (e) => {
-                            e.preventDefault()
-                            try {
-
-                                if (assistantMode === "Ecosystem") {
-                                    handleSubmit()
-                                } else if (assistantMode === "Hackathons") {
-                                    setIsHackathonsLoading(true)
-                                    console.log(input)
-                                    const response = await fetch(`/api/hackathons`, {
-                                        method: "POST",
-                                        headers: {
-                                            "Content-Type": "application/json"
-                                        },
-                                        body: JSON.stringify({
-                                            query: input,
-                                            hackathon: collosseumEvent?.toLowerCase()
-                                        })
-                                    })
-                                    const data = await response.json()
-                                    setHackathonData(data.projects)
-                                    setInput("")
-                                }
-                            } catch (err) {
-                                console.error(err)
-                            } finally {
-                                setIsHackathonsLoading(false)
-                            }
-
-                        }} className="flex space-x-3">
+                        <form onSubmit={handleFormSubmit} className="flex space-x-3">
                             <Input
                                 name="prompt"
                                 autoComplete="off"
@@ -460,12 +475,12 @@ export default function ChatPage() {
                                 onChange={handleInputChange}
                                 placeholder="Ask me anything about Solana..."
                                 className="flex-1 bg-gray-900/80 border-gray-700/50 text-white placeholder-gray-400 focus:border-[var(--solana-purple)]/50"
-                                disabled={status === "streaming" || status === "submitted" || isHackathonsLoading}
+                                disabled={status === "streaming" || status === "submitted" || isHackathonsLoading || isBlinksLoading}
                             />
 
                             <Button
                                 type="submit"
-                                className={cn(status === "streaming" || status === "submitted" || isHackathonsLoading ? "select-none cursor-default pointer-events-none bg-gray-800/50 text-white/30" : "bg-gradient-to-r from-[var(--solana-purple)] to-[var(--solana-green)] hover:from-[var(--solana-purple)]/90 hover:to-[var(--solana-green)]/90  cursor-pointer text-white")}
+                                className={cn(status === "streaming" || status === "submitted" || isHackathonsLoading || isBlinksLoading ? "select-none cursor-default pointer-events-none bg-gray-800/50 text-white/30" : "bg-gradient-to-r from-[var(--solana-purple)] to-[var(--solana-green)] hover:from-[var(--solana-purple)]/90 hover:to-[var(--solana-green)]/90  cursor-pointer text-white")}
                             >
                                 <Send className="w-4 h-4" />
                             </Button>
