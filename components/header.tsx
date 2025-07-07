@@ -1,5 +1,4 @@
 "use client"
-import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { usePathname } from "next/navigation";
@@ -9,14 +8,13 @@ function BaseHeader() {
     <header className="w-full">
       <nav className="relative z-50 flex items-center justify-between p-6 max-w-7xl mx-auto">
         <Link href="/">
-          <Image
+          <img
             src="/images/brand/logo.png"
             width={854}
             height={210}
             title="Logo"
             alt="Logo"
             className="cursor-pointer max-w-16 h-auto w-full"
-            priority
           />
         </Link>
 

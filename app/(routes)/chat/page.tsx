@@ -22,7 +22,6 @@ import { EarlyAccess } from "@/components/views/early-access"
 import { SolanaWalletButton } from "@/components/wallet"
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import Image from "next/image"
 import { HackathonProject, HackathonProjectCard } from "@/components/hackathons/hackathon-project-card";
 import { cn } from "@/lib/utils";
 import { HackathonLoader } from "@/components/hackathons/hackathon-loader";
@@ -63,7 +62,7 @@ export default function ChatPage() {
     });
 
     const blinksUrl = [
-        "solana-action:https://alldomains.id/api/actions/blink?_brf=b57a9e16-2bb7-4e68-ac71-16ed54e5ecf8&_bin=b0953247-af8a-4d6f-bb66-d7c6258159be",
+        "https://join.catoff.xyz/api/actions/join-challenge?clusterurl=mainnet",
         "https://leandrogavidia.com/api/actions/hosico",
         "solana-action:https://hedgehog.markets/api/v2/classic/39BBW9HS9ehhFS4HkAfCJjxZ6MDLfHJcVop5fLZbf5Eq?_brf=4a122631-8506-4ad0-84c6-ff4bc1c0b1bb&_bin=2592f7a1-ffde-4c08-8c94-556bbed84d63",
         "solana-action:https://tensor.dial.to/bid/6PnPR2rcJdUpd6Mx2vsnsucWG3uAX3ahy66ARACng612?_brf=fa955c0b-6975-4de3-9bad-4e192e4746aa&_bin=a4e5ee9c-649d-4cb8-9c42-d3a0bc7458a4",
@@ -242,14 +241,13 @@ export default function ChatPage() {
                                     className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-black"
                                 >
 
-                                    <Image
+                                    <img
                                         src="/images/brand/logo.png"
                                         width={854}
                                         height={210}
                                         title="Logo"
                                         alt="Logo"
                                         className="max-w-6 h-auto w-full"
-                                        priority
                                     />
                                 </div>
                                 <Card
@@ -288,14 +286,13 @@ export default function ChatPage() {
                                                     {message.role === "user" ? (
                                                         <User className="w-4 h-4 text-white" />
                                                     ) : (
-                                                        <Image
+                                                        <img
                                                             src="/images/brand/logo.png"
                                                             width={854}
                                                             height={210}
                                                             title="Logo"
                                                             alt="Logo"
                                                             className="max-w-6 h-auto w-full"
-                                                            priority
                                                         />
                                                     )}
                                                 </div>
@@ -339,14 +336,13 @@ export default function ChatPage() {
                                         <div
                                             className={`space-x-3 max-w-max h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-black`}
                                         >
-                                            <Image
+                                            <img
                                                 src="/images/brand/logo.png"
                                                 width={854}
                                                 height={210}
                                                 title="Logo"
                                                 alt="Logo"
                                                 className="max-w-6 h-auto w-full"
-                                                priority
                                             />
 
                                             <div className="flex items-center justify-center space-x-2">

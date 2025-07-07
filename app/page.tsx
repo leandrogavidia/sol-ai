@@ -212,7 +212,7 @@ export default function HomePage() {
                   <CardContent className="p-0">
                     <Button
                       onClick={() => setOpenFaq(openFaq === index ? null : index)}
-                      className="cursor-pointer w-full p-6 text-left flex items-center justify-between rounded-lg"
+                      className="cursor-pointer w-full p-6 text-left flex items-center justify-between rounded-lg text-white bg-transparent"
                     >
                       <h3 className="text-lg font-semibold pr-4">{faq.question}</h3>
                       <div

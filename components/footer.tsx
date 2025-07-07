@@ -4,7 +4,6 @@ import Link from "next/link";
 import { Discord } from "./icons/discord";
 import { X } from "./icons/x";
 import { Instagram } from "./icons/instagram";
-import Image from "next/image";
 import { GitHub } from "./icons/github";
 import { config } from "@/lib/config";
 import { usePathname } from "next/navigation";
@@ -32,14 +31,13 @@ function BaseFooter() {
     <footer className="px-6 py-12 max-w-7xl mx-auto border-t border-gray-800 relative mt-10">
       <div className="flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="flex justify-start items-center gap-x-2">
-          <Image
+          <img
             src="/images/brand/logo.png"
             width={854}
             height={210}
             title="Logo"
             alt="Logo"
             className="max-w-10 h-auto w-full"
-            priority
           />
           <span className="font-normal text-sm">© 2025 Sol AI</span>
         </div>
