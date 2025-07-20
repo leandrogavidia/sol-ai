@@ -14,7 +14,7 @@ import {
     DropdownMenuSubTrigger,
     DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu"
-import { Send, User, ChevronDown, Zap, Trophy, Globe } from "lucide-react"
+import { Send, User, ChevronDown, Zap, Trophy, Globe, Check, Copy } from "lucide-react"
 import { Pencil } from "lucide-react"
 import { useState, useRef, useEffect, FormEvent } from "react"
 import { useWallet } from "@solana/wallet-adapter-react"
@@ -27,6 +27,12 @@ import { cn } from "@/lib/utils";
 import { HackathonLoader } from "@/components/hackathons/hackathon-loader";
 import { BlinkCarousel } from "@/components/blinks/blink-carousel";
 import { BlinkSkeleton } from "@/components/blinks/blink-skeleton";
+import Link from "next/link";
+import { config } from "@/lib/config";
+import { X } from "@/components/icons/x";
+import { GitHub } from "@/components/icons/github";
+import { Discord } from "@/components/icons/discord";
+import { Instagram } from "@/components/icons/instagram";
 
 type AssistantMode = "Ecosystem" | "Blinks" | "Hackathons"
 type HackathonSubMode = "Colosseum" | null
@@ -75,6 +81,26 @@ export default function ChatPage() {
     const [isVerified, setIsVerified] = useState(false)
     const [blinksUrl, setBlinksUrl] = useState<string[]>([]);
     const [questionCount, setQuestionCount] = useState<number>(0)
+    const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
+
+    const socialMedia = [
+        {
+            link: config.socialMedia.x,
+            icon: <X className="fill-zinc-500 hover:fill-solana-purple transition-colors" />
+        },
+        {
+            link: config.socialMedia.github,
+            icon: <GitHub className="fill-zinc-500 hover:fill-solana-purple transition-colors" />
+        },
+        {
+            link: config.socialMedia.discord,
+            icon: <Discord className="fill-zinc-500 hover:fill-solana-purple transition-colors" />
+        },
+        {
+            link: config.socialMedia.instagram,
+            icon: <Instagram className="fill-zinc-500 hover:fill-solana-purple transition-colors" />
+        },
+    ]
 
     const preSelectedQuestions = [
         "What is Solana and how does it work?",
@@ -86,6 +112,13 @@ export default function ChatPage() {
         "What are the most popular Solana wallets?",
         "How does Solana handle smart contracts?",
     ]
+
+    const handleCopy = (id: string, text: string) => {
+        navigator.clipboard.writeText(text).then(() => {
+            setCopiedMessageId(id);
+            setTimeout(() => setCopiedMessageId(null), 2000); // reset after 2s
+        });
+    };
 
     const cleanConversation = () => {
         setMessages([])
@@ -133,7 +166,7 @@ export default function ChatPage() {
         e.preventDefault()
 
         const walletAddress = publicKey?.toBase58()
-        if (!walletAddress) return
+        if (!walletAddress || !input.trim()) return
 
         if (questionCount >= 15) {
             alert("You've reached your 15-question limit for today.")
@@ -383,64 +416,73 @@ export default function ChatPage() {
                             assistantMode === "Ecosystem" ? (
                                 <>
 
-                                    {messages.map((message) => (
-                                        <div key={message.id} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
-                                            <div
-                                                className={`flex items-start space-x-3 max-w-3xl relative ${message.role === "user" ? "flex-row-reverse space-x-reverse" : ""}`}
-                                            >
-                                                <div
-                                                    className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${message.role === "user" ? "bg-gray-700" : "bg-black"
-                                                        }`}
-                                                >
-                                                    {message.role === "user" ? (
-                                                        <User className="w-4 h-4 text-white" />
-                                                    ) : (
-                                                        <img
-                                                            src="/images/brand/logo.png"
-                                                            width={854}
-                                                            height={210}
-                                                            title="Logo"
-                                                            alt="Logo"
-                                                            className="max-w-6 h-auto w-full"
-                                                        />
-                                                    )}
-                                                </div>
-                                                <Card
-                                                    className={`${message.role === "user"
-                                                        ? "bg-[var(--solana-purple)]/20 border-[var(--solana-purple)]/30"
-                                                        : "bg-gray-900/80 border-gray-700/50"
-                                                        } backdrop-blur-sm py-0`}
-                                                >
-                                                    <CardContent className="p-4 flex flex-col justify-start items-start gap-5">
-                                                        <Markdown
-                                                            remarkPlugins={[remarkGfm]}
-                                                            components={{
-                                                                p(props) {
-                                                                    const { ...rest } = props
-                                                                    return <p className="block" {...rest}></p>
+                                    {messages.map((message, index) => {
+                                        const isAssistant = message?.role === "assistant";
+                                        const isFirstAssistant = isAssistant && messages.findIndex(m => m.role === "assistant") === index;
 
-                                                                },
-                                                                a(props) {
-                                                                    const { ...rest } = props
-                                                                    return <a target="_blank" rel="noopener noreferrer" className="font-semibold cursor-pointer text-solana-green underline" {...rest}></a>
-                                                                },
-                                                                ul(props) {
-                                                                    const { ...rest } = props
-                                                                    return <ul className="flex flex-col justify-center items-start gap-4" {...rest} />
-                                                                },
-                                                                ol(props) {
-                                                                    const { ...rest } = props
-                                                                    return <ol className="flex flex-col justify-center items-start gap-4" {...rest} />
-                                                                },
-                                                            }}
-                                                        >
-                                                            {message.content}
-                                                        </Markdown>
-                                                    </CardContent>
-                                                </Card>
+                                        return (
+                                            <div key={message?.id} className={`flex ${message?.role === "user" ? "justify-end" : "items-start flex-col"}`}>
+                                                <div
+                                                    className={`flex items-start space-x-3 max-w-3xl relative ${message?.role === "user" ? "flex-row-reverse space-x-reverse" : ""}`}
+                                                >
+                                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${message?.role === "user" ? "bg-gray-700" : "bg-black"}`}>
+                                                        {message?.role === "user" ? (
+                                                            <User className="w-4 h-4 text-white" />
+                                                        ) : (
+                                                            <img
+                                                                src="/images/brand/logo.png"
+                                                                width={854}
+                                                                height={210}
+                                                                title="Logo"
+                                                                alt="Logo"
+                                                                className="max-w-6 h-auto w-full"
+                                                            />
+                                                        )}
+                                                    </div>
+                                                    <Card className={`${message?.role === "user" ? "bg-[var(--solana-purple)]/20 border-[var(--solana-purple)]/30" : "bg-gray-900/80 border-gray-700/50"} backdrop-blur-sm py-0 w-full`}>
+                                                        <CardContent className="p-4 flex flex-col justify-start items-start gap-3 relative">
+                                                            <Markdown
+                                                                remarkPlugins={[remarkGfm]}
+                                                                components={{
+                                                                    p(props) {
+                                                                        return <p className="block" {...props} />
+                                                                    },
+                                                                    a(props) {
+                                                                        return <a target="_blank" rel="noopener noreferrer" className="font-semibold cursor-pointer text-solana-green underline" {...props} />
+                                                                    },
+                                                                    ul(props) {
+                                                                        return <ul className="flex flex-col justify-center items-start gap-4" {...props} />
+                                                                    },
+                                                                    ol(props) {
+                                                                        return <ol className="flex flex-col justify-center items-start gap-4" {...props} />
+                                                                    },
+                                                                }}
+                                                            >
+                                                                {message?.content}
+                                                            </Markdown>
+
+                                                        </CardContent>
+                                                    </Card>
+                                                </div>
+                                                {isAssistant && (
+                                                    <Button
+                                                        onClick={() => handleCopy(message?.id, message?.content)}
+                                                        className="text-white hover:text-solana-purple transition-all ml-11 mt-4 cursor-pointer border-none"
+                                                        title={copiedMessageId === message?.id ? "Copied!" : "Copy to clipboard"}
+                                                        variant='outline'
+                                                        size="icon"
+                                                    >
+                                                        {copiedMessageId === message?.id ? (
+                                                            <Check className="w-4 h-4 text-green-400" />
+                                                        ) : (
+                                                            <Copy className="w-4 h-4" />
+                                                        )}
+                                                    </Button>
+                                                )}
                                             </div>
-                                        </div>
-                                    ))}
+                                        );
+                                    })}
+
                                     {status === "submitted" ? (
                                         <div
                                             className={`space-x-3 max-w-max h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-black`}
@@ -551,7 +593,7 @@ export default function ChatPage() {
 
                             <Button
                                 type="submit"
-                                className={cn(status === "streaming" || status === "submitted" || isHackathonsLoading || isBlinksLoading || isQuestionLimitLoading ? "select-none cursor-default pointer-events-none bg-gray-800/50 text-white/30" : "bg-gradient-to-r from-[var(--solana-purple)] to-[var(--solana-green)] hover:from-[var(--solana-purple)]/90 hover:to-[var(--solana-green)]/90  cursor-pointer text-white")}
+                                className={cn(status === "streaming" || status === "submitted" || isHackathonsLoading || isBlinksLoading || isQuestionLimitLoading || !input.trim() ? "select-none cursor-default pointer-events-none bg-gray-800/50 text-white/30" : "bg-gradient-to-r from-[var(--solana-purple)] to-[var(--solana-green)] hover:from-[var(--solana-purple)]/90 hover:to-[var(--solana-green)]/90  cursor-pointer text-white")}
                             >
                                 <Send className="w-4 h-4" />
                             </Button>
@@ -565,7 +607,22 @@ export default function ChatPage() {
                             Sol AI can make mistakes. Please verify important information.
                         </p>
 
-                        <span className="w-full text-xs text-gray-200 text-center inline-block mx-auto mt-4">From 🌎 LATAM to Solana 💜</span>
+                        <div className="flex items-center w-full justify-between gap-5 mt-4">
+                            <span className="w-full text-xs text-gray-200 text-left inline-block mx-auto">From 🌎 LATAM to Solana 💜</span>
+                            <ul className="flex justify-center items-center gap-x-5">
+                                {
+                                    socialMedia.map(({ link, icon }) => (
+                                        <li key={link}>
+                                            <Link href={link} target="_blank">
+                                                <span className="[&>svg]:h-3 [&>svg]:w-3">
+                                                    {icon}
+                                                </span>
+                                            </Link>
+                                        </li>
+                                    ))
+                                }
+                            </ul>
+                        </div>
 
                     </div>
                 </div>
