@@ -418,7 +418,6 @@ export default function ChatPage() {
 
                                     {messages.map((message, index) => {
                                         const isAssistant = message?.role === "assistant";
-                                        const isFirstAssistant = isAssistant && messages.findIndex(m => m.role === "assistant") === index;
 
                                         return (
                                             <div key={message?.id} className={`flex ${message?.role === "user" ? "justify-end" : "items-start flex-col"}`}>
