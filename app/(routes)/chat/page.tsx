@@ -416,7 +416,7 @@ export default function ChatPage() {
                             assistantMode === "Ecosystem" ? (
                                 <>
 
-                                    {messages.map((message, index) => {
+                                    {messages.map((message) => {
                                         const isAssistant = message?.role === "assistant";
 
                                         return (
