@@ -14,10 +14,6 @@
 3. Able to interpret and display blinks
 4. Hackathons
 
-## Demo
-
-[**Website**](https://sol-ai.app/)
-
 ## Getting Started
 
 1. `git clone`
